@@ -1,0 +1,73 @@
+Q1: I write down my to-dos to keep track of them | I keep track of my to-dos in my head
+Q2: My first instinct is to be suspicious | My first instinct is to trust
+Q3: I get bored quickly when I'm alone | I absolutely need time to myself
+Q4: I accept the way things are done now | I tend to be dissatisfied with the way things are done now
+Q5: I always put things back where they belong | I leave things wherever they end up
+Q6: I hate being told I'm "like a machine" | I want to think like a machine, without being swayed by emotions
+Q7: I'm usually full of energy | I'm usually calm
+Q8: I'm more comfortable with questions where I pick the right answer | ... where I write out my own thoughts
+Q9: My surroundings tend to be messy | My surroundings tend to be systematically organized
+Q10: I get hurt easily | Most things don't faze me
+Q11: I do better when working together with others | I do better when working alone
+Q12: I focus on the present moment | I focus on what's coming next
+Q13: I plan well in advance | I plan when things come up
+Q14: I want people to respect me | I want people to love me
+Q15: Social gatherings leave me drained | Social gatherings leave me energized
+Q16: I blend in easily with a crowd | I stand out in a crowd
+Q17: When deciding, I keep several options open | When deciding, I commit to one and push ahead
+Q18: I want to be good at fixing broken things | I want to be good at solving people's problems
+Q19: In conversations, I'm mostly the one talking | ... mostly the one listening
+Q20: When recounting something that happened, I focus on the facts | ... on what it meant
+Q21: I get tasks out of the way right away | I tend to put tasks off
+Q22: I decide by following my heart | I decide by thinking things through logically
+Q23: On days off, I prefer staying home | On days off, I prefer going out
+Q24: I look at the big picture first | I look at the details first
+Q25: I do things spontaneously | I do things after preparing in advance
+Q26: When judging right and wrong, fairness is my standard | ... consideration for people is my standard
+Q27: Calling out to someone loudly feels awkward to me | ... feels natural to me
+Q28: I need to reason it through in theory to understand something | I need to experience it firsthand to understand something
+Q29: I tend to put more energy into work | I tend to put more energy into play
+Q30: Dealing with emotions makes me uncomfortable | I treat emotions with care
+Q31: I like being in front of people | I'd rather avoid being in front of people
+Q32: I'm curious about what happened | I'm curious about why it happened
+ANX1: I often worry that my partner doesn't really love me.
+ANX2: I worry that my partner won't care about me as much as I care about them.
+ANX3: I often wish my partner liked me as much as I like them.
+ANX4: I worry a lot about my romantic relationships.
+ANX5: When my partner isn't around, I worry that they might be attracted to someone else.
+ANX6: When I show my feelings to my partner, I'm afraid they won't feel the same way about me.
+ANX7: I rarely worry about my partner leaving me.
+ANX8: Being with my partner makes me unsure whether I'm a good enough person.
+ANX9: I don't often think about being abandoned by someone.
+ANX10: I feel that my partner doesn't want to get as close as I would like.
+ANX11: Sometimes my partner's feelings toward me change for no clear reason.
+ANX12: My desire to be close is sometimes so strong that people feel overwhelmed and pull away.
+ANX13: I'm afraid that once my partner gets to know me well, they won't like the real me.
+ANX14: It makes me angry that I don't seem to get the love and support I need from my partner.
+ANX15: I worry that I don't measure up to other people.
+ANX16: My partner only seems to pay attention to me when I get angry.
+ANX17: I'm afraid of losing my partner's love.
+ANX18: I often worry that my partner won't want to stay with me.
+AVO1: I'm more comfortable not revealing my deepest feelings to my partner.
+AVO2: I'm comfortable opening up to my partner about what's on my mind.
+AVO3: I find it hard to lean on my partner.
+AVO4: I'm very comfortable being close to my partner.
+AVO5: I'm uncomfortable opening up to my partner.
+AVO6: I'm more comfortable not getting too close to my partner.
+AVO7: I get uncomfortable when my partner wants to get very close.
+AVO8: I tend to get close to my partner quickly.
+AVO9: It's not hard for me to reach out to my partner.
+AVO10: When I have problems or worries, I usually talk them over with my partner.
+AVO11: Leaning on my partner when times are hard helps me.
+AVO12: I tell my partner almost everything.
+AVO13: I talk things over with my partner.
+AVO14: I get tense when my partner gets too close.
+AVO15: I'm comfortable depending on my partner.
+AVO16: Leaning on my partner is easy for me.
+AVO17: It's easy for me to show affection to my partner.
+AVO18: My partner really understands me and what I need.
+NS1: I prefer variety to the same old routine. / NS2: I tend to enjoy adventure. / NS3: I try to follow the rules. / NS4: I like sticking with what's familiar. / NS5: I like to act on whatever I feel like at the moment. / NS6: I act before I think. / NS7: I think twice before doing something. / NS8: I carefully size up the situation before I act.
+HA1: I worry that things will turn out for the worst. / HA2: I get stressed easily. / HA3: I generally feel at ease. / HA4: I avoid things that look dangerous. / HA5: I tend to take risks. / HA6: I get nervous when meeting new people. / HA7: I feel comfortable even in unfamiliar situations. / HA8: I often feel that things are more than I can handle.
+RD1: It really hurts me when others are going through hard times. / RD2: I easily empathize with other people's feelings. / RD3: I'm not very interested in other people's feelings. / RD4: I make friends with people quickly. / RD5: I tend to keep people at a distance. / RD6: I show my feelings openly. / RD7: I tend to keep my feelings bottled up inside. / RD8: I try hard to please everyone.
+P1: When something needs doing, I start on it right away. / P2: I only get started when someone pushes me. / P3: I can handle it even when difficult things come my way. / P4: I give up easily. / P5: I never give up until the end. / P6: I keep tweaking things until they feel perfect. / P7: I do more than what's expected of me. / P8: I do just enough to get by without problems.
+[두 갈래로 읽힌 문항] Q4(지금 방식: 일 처리 vs 내 삶), Q6(좌우 비대칭), Q12, Q13(닥치면 계획 vs 계획 안 함), Q16(사교적 vs 안 튐), Q20, Q29, Q30(소중히 여김 vs 능숙하게 다룸), ANX8, ANX11, ANX12(사람들=상대 vs 일반), AVO6, AVO9(다가가다: 정서 vs 연락 먼저), HA8(일의 양 vs 상황 전반), P3(능력 vs 책임)

@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>나란 · 가치관 검사 시험판</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root {
+    --bg: #ffffff; --card: #f2f4f6; --card-hover: #e8ebed; --text: #191f28; --sub: #6b7684; --sub2: #8b95a1;
+    --line: #e5e8eb; --blue: #3182f6; --blue-soft: #e8f3ff; --red: #f04452; --red-soft: #ffeeee;
+    --amber: #fe9800; --amber-soft: #fff4e0;
+    /* 슬라이더 좌/우 */
+    --left: #3182f6; --left-soft: #e8f3ff; --left-mid: #c9e2ff;
+    --right: #f2780c; --right-soft: #fff1e4; --right-mid: #ffd9b3;
+    /* MaxDiff */
+    --neg: #f04452; --neg-soft: #ffeeee; --neg-mid: #ffd4d8;
+    --pos: #03b26c; --pos-soft: #e5f8ef; --pos-mid: #b5ecd2;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: Pretendard, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+  button { -webkit-tap-highlight-color: transparent; }
+  .wrap { max-width: 480px; margin: 0 auto; padding: 20px 16px 120px; min-height: 100vh; }
+  .top { display: flex; align-items: center; gap: 12px; height: 44px; }
+  .back { border: 0; background: none; font-size: 22px; color: var(--sub); cursor: pointer; padding: 4px 8px 4px 0; }
+  .bar { flex: 1; height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; background: var(--blue); transition: width .3s; }
+  .count { font-size: 13px; color: var(--sub); min-width: 44px; text-align: right; }
+  .part { font-size: 14px; color: var(--blue); font-weight: 600; margin: 28px 0 8px; }
+  h1 { font-size: 26px; line-height: 1.38; margin: 8px 0 12px; font-weight: 700; letter-spacing: -0.02em; word-break: keep-all; }
+  h2 { font-size: 21px; line-height: 1.45; margin: 0 0 24px; font-weight: 700; letter-spacing: -0.02em; word-break: keep-all; }
+  .sit { font-size: 15px; color: var(--sub); margin: 0 0 6px; }
+  p.lead { font-size: 16px; color: var(--sub); line-height: 1.6; word-break: keep-all; }
+  .help { font-size: 14px; color: var(--sub); margin: -14px 0 16px; }
+
+  /* 상황판단 선택지 */
+  .opt { display: block; width: 100%; text-align: left; border: 0; background: var(--card); border-radius: 16px; padding: 18px; margin-bottom: 10px; font: inherit; font-size: 16px; line-height: 1.5; color: var(--text); cursor: pointer; word-break: keep-all; transition: background .15s, transform .1s, box-shadow .15s; }
+  .opt:hover { background: var(--blue-soft); box-shadow: inset 0 0 0 1.5px var(--left-mid); }
+  .opt:active { transform: scale(.985); }
+  .opt.sel { background: var(--blue-soft); color: var(--blue); font-weight: 600; box-shadow: inset 0 0 0 1.5px var(--blue); }
+
+  /* 양극 슬라이더 */
+  .poles { display: flex; gap: 10px; }
+  .pole { flex: 1; border: 0; border-radius: 16px; padding: 16px 14px; font: inherit; font-size: 15px; line-height: 1.5; word-break: keep-all; cursor: pointer; text-align: left; transition: background .15s, box-shadow .15s, color .15s, transform .1s; }
+  .pole:active { transform: scale(.98); }
+  .pole.l { background: var(--left-soft); color: #1b4f9c; }
+  .pole.r { background: var(--right-soft); color: #9a4a06; text-align: right; }
+  .pole.l:hover { box-shadow: inset 0 0 0 1.5px var(--left); }
+  .pole.r:hover { box-shadow: inset 0 0 0 1.5px var(--right); }
+  .pole.l.on { background: var(--left); color: #fff; font-weight: 600; }
+  .pole.r.on { background: var(--right); color: #fff; font-weight: 600; }
+  .pole.l.half { box-shadow: inset 0 0 0 2px var(--left); font-weight: 600; }
+  .pole.r.half { box-shadow: inset 0 0 0 2px var(--right); font-weight: 600; }
+  .pole.dim { opacity: .45; }
+  .dots { display: flex; justify-content: space-between; align-items: center; margin: 24px 6px 0; position: relative; }
+  .dots::before { content: ""; position: absolute; left: 14px; right: 14px; top: 50%; height: 3px; border-radius: 2px; background: linear-gradient(90deg, var(--left-mid), var(--line) 45%, var(--line) 55%, var(--right-mid)); }
+  .dot { position: relative; width: 30px; height: 30px; border-radius: 50%; background: #fff; cursor: pointer; padding: 0; transition: transform .12s, background .15s, box-shadow .15s; }
+  .dot:hover { transform: scale(1.15); }
+  .dot.l { border: 2px solid var(--left); }
+  .dot.r { border: 2px solid var(--right); }
+  .dot.m { border: 2px solid #c4cad0; width: 22px; height: 22px; }
+  .dot.l.near, .dot.r.near { width: 24px; height: 24px; }
+  .dot.l.sel { background: var(--left); box-shadow: 0 0 0 6px var(--left-soft); }
+  .dot.r.sel { background: var(--right); box-shadow: 0 0 0 6px var(--right-soft); }
+  .dot.m.sel { background: #8b95a1; border-color: #8b95a1; box-shadow: 0 0 0 6px var(--card); }
+  .dothint { display: flex; justify-content: space-between; font-size: 12px; margin: 10px 0 0; }
+  .dothint span:first-child { color: var(--left); } .dothint span:nth-child(2) { color: var(--sub2); } .dothint span:last-child { color: var(--right); }
+
+  /* MaxDiff */
+  .md-card { display: flex; align-items: center; gap: 8px; background: var(--card); border-radius: 14px; padding: 10px 10px 10px 16px; margin-bottom: 8px; font-size: 15px; line-height: 1.45; word-break: keep-all; transition: background .15s, box-shadow .15s; }
+  .md-card .t { flex: 1; padding: 4px 0; }
+  .md-card.neg { background: var(--neg-soft); box-shadow: inset 0 0 0 1.5px var(--neg); }
+  .md-card.pos { background: var(--pos-soft); box-shadow: inset 0 0 0 1.5px var(--pos); }
+  .md-btn { border: 0; border-radius: 10px; padding: 9px 10px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background .15s, color .15s, transform .1s; }
+  .md-btn:active { transform: scale(.95); }
+  .md-btn.neg { background: var(--neg-soft); color: var(--neg); }
+  .md-btn.neg:hover { background: var(--neg-mid); }
+  .md-btn.pos { background: var(--pos-soft); color: var(--pos); }
+  .md-btn.pos:hover { background: var(--pos-mid); }
+  .md-card.neg .md-btn.pos, .md-card.pos .md-btn.neg { background: rgba(255,255,255,.7); }
+  .md-btn.neg.sel { background: var(--neg); color: #fff; }
+  .md-btn.pos.sel { background: var(--pos); color: #fff; }
+  .legend { display: flex; gap: 14px; font-size: 13px; margin: -8px 0 16px; }
+  .legend span::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+  .legend .n { color: var(--neg); } .legend .n::before { background: var(--neg); }
+  .legend .p { color: var(--pos); } .legend .p::before { background: var(--pos); }
+  .tie { display: flex; align-items: center; gap: 12px; width: 100%; border: 0; background: var(--card); border-radius: 14px; padding: 14px 16px; margin-bottom: 8px; font: inherit; font-size: 15px; text-align: left; cursor: pointer; word-break: keep-all; transition: background .15s, box-shadow .15s; }
+  .tie:hover { box-shadow: inset 0 0 0 1.5px var(--neg); }
+  .tie .no { flex: none; width: 26px; height: 26px; border-radius: 50%; background: #fff; color: var(--sub2); font-size: 13px; font-weight: 700; display: grid; place-items: center; }
+  .tie.sel { background: var(--neg-soft); box-shadow: inset 0 0 0 1.5px var(--neg); }
+  .tie.sel .no { background: var(--neg); color: #fff; }
+  .tie.trait:hover { box-shadow: inset 0 0 0 1.5px var(--pos); }
+  .tie.trait.sel { background: var(--pos-soft); box-shadow: inset 0 0 0 1.5px var(--pos); }
+  .tie.trait.sel .no { background: var(--pos); }
+
+  .flag { margin-top: 22px; }
+  .flag-btn { border: 0; background: none; color: var(--sub); font: inherit; font-size: 14px; cursor: pointer; padding: 6px 0; }
+  .flag-btn:hover { color: var(--amber); }
+  .flag-btn.on { color: var(--amber); font-weight: 600; }
+  textarea { width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 12px; font: inherit; font-size: 15px; min-height: 72px; resize: vertical; margin-top: 6px; }
+  .cta { position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 16px 20px; background: linear-gradient(transparent, #fff 30%); }
+  .cta button { display: block; width: 100%; max-width: 448px; margin: 0 auto; border: 0; border-radius: 16px; padding: 17px; font: inherit; font-size: 17px; font-weight: 600; background: var(--blue); color: #fff; cursor: pointer; transition: background .15s; }
+  .cta button:hover:not(:disabled) { background: #1b64da; }
+  .cta button:disabled { background: #d1d6db; cursor: default; }
+
+  /* 결과 */
+  .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 12px; }
+  .card h3 { margin: 0 0 14px; font-size: 17px; }
+  .hero { padding: 36px 4px 8px; }
+  .hero .eyebrow { font-size: 15px; color: var(--sub); margin-bottom: 8px; }
+  .hero h1 { font-size: 27px; margin: 0 0 6px; }
+  .points { background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 6px 20px; margin: 20px 0 12px; }
+  .point { padding: 16px 0; border-top: 1px solid var(--line); }
+  .point:first-child { border-top: 0; }
+  .point .k { font-size: 13px; font-weight: 600; color: var(--sub2); margin-bottom: 4px; }
+  .point .v { font-size: 16px; line-height: 1.6; word-break: keep-all; }
+  .duo { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 12px; }
+  .duo .card { margin: 0; }
+  .duo h3 { font-size: 15px; margin-bottom: 8px; }
+  .duo ul { margin: 0; padding-left: 18px; font-size: 15px; line-height: 1.65; word-break: keep-all; }
+  .card.good { background: var(--pos-soft); } .card.good h3 { color: #02814f; }
+  .card.care { background: var(--amber-soft); } .card.care h3 { color: #c56f00; }
+  .sec { font-size: 20px; font-weight: 700; margin: 40px 0 6px; letter-spacing: -0.02em; }
+  .sec-sub { font-size: 14px; color: var(--sub); margin: 0 0 16px; }
+  .ax { background: #fff; border: 1px solid var(--line); border-radius: 20px; margin-bottom: 12px; overflow: hidden; }
+  .ax-top { padding: 18px 20px 16px; background: var(--tint); }
+  .ax-name { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--c); margin-bottom: 6px; }
+  .ax-name::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+  .ax-band { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .ax-conf { display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 6px; background: #fff; color: var(--c); margin-left: 6px; vertical-align: 2px; }
+  .ax-desc { font-size: 15px; line-height: 1.6; color: #333d4b; word-break: keep-all; margin: 6px 0 16px; }
+  .track { position: relative; height: 10px; background: rgba(255,255,255,.9); border-radius: 5px; }
+  .track .fill { position: absolute; top: 0; height: 100%; background: var(--c); border-radius: 5px; opacity: .85; }
+  .track .c { position: absolute; left: 50%; top: -3px; width: 2px; height: 16px; background: #c4cad0; transform: translateX(-1px); }
+  .track .m { position: absolute; top: -5px; width: 20px; height: 20px; border-radius: 50%; background: var(--c); transform: translateX(-50%); border: 3px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.2); }
+  .poles-row { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; color: var(--sub); margin-top: 8px; }
+  .ev { padding: 6px 20px 14px; }
+  .ev summary { cursor: pointer; font-size: 14px; color: var(--sub); padding: 10px 0; list-style: none; }
+  .ev summary::-webkit-details-marker { display: none; }
+  .ev summary::after { content: " ▾"; }
+  .ev[open] summary::after { content: " ▴"; }
+  .ev-item { padding: 12px 0; border-top: 1px solid var(--line); font-size: 14px; line-height: 1.55; word-break: keep-all; }
+  .ev-item .q { color: var(--sub); margin-bottom: 4px; }
+  .ev-item .a { font-weight: 600; }
+  .chip { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 7px; border-radius: 6px; margin-left: 4px; background: var(--tint); color: var(--c); white-space: nowrap; }
+  .chip.zero { background: var(--card); color: var(--sub2); }
+  .rank { list-style: none; margin: 0; padding: 0; counter-reset: r; }
+  .rank li { counter-increment: r; display: flex; gap: 10px; align-items: baseline; padding: 7px 0; font-size: 15px; line-height: 1.5; word-break: keep-all; }
+  .rank li::before { content: counter(r); flex: none; width: 22px; height: 22px; border-radius: 50%; font-size: 12px; font-weight: 700; display: grid; place-items: center; background: var(--rc); color: #fff; }
+  .rank.neg { --rc: var(--neg); } .rank.pos { --rc: var(--pos); } .rank.mute { --rc: #b0b8c1; }
+  .sub-h { font-size: 13px; font-weight: 700; color: var(--sub); margin: 16px 0 4px; }
+  .mirror-row { display: grid; grid-template-columns: 64px 1fr; gap: 8px; font-size: 14px; line-height: 1.5; padding: 4px 0; word-break: keep-all; }
+  .mirror-row b { color: var(--sub); font-weight: 600; }
+  .note { font-size: 13px; color: var(--sub); line-height: 1.6; }
+  .dev { margin-top: 32px; border-top: 1px dashed var(--line); padding-top: 8px; }
+  .dev summary { cursor: pointer; font-size: 14px; color: var(--sub); padding: 10px 0; }
+  .diff { font-size: 14px; line-height: 1.6; padding: 10px 0; border-top: 1px solid var(--line); }
+  .diff b { display: block; }
+  .tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 6px; background: var(--amber-soft); color: var(--amber); margin-left: 6px; }
+  .ghost { display: block; width: 100%; border: 0; border-radius: 14px; padding: 15px; font: inherit; font-size: 15px; font-weight: 600; background: var(--card); color: var(--text); cursor: pointer; margin-top: 10px; transition: background .15s; }
+  .ghost:hover { background: var(--card-hover); }
+  .ghost.primary { background: var(--blue); color: #fff; }
+  .ghost.primary:hover { background: #1b64da; }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<div class="cta"><button id="next" disabled>다음</button></div>
+
+<script>
+// ───────── 축 정의 ─────────
+const AXES = {
+  RESP:   { name: '책임 축', L: '책임', R: '이해' },
+  BOUND:  { name: '경계 축', L: '자율', R: '보살핌' },
+  CANDOR: { name: '표현 축', L: '솔직', R: '조화' },
+  EMO:    { name: '감정 축', L: '구분', R: '헤아림' },
+};
+// 시험 축 (채점·결과 표시 제외, 파일럿 데이터 수집용) — docs/04-axis3-redesign.md v0.6
+const TRIAL_AXES = { SENIOR: { name: '수평 축(시험)', L: '수평', R: '연륜' } };
+const POLE = {}; // 극 이름 → [축, 부호]
+for (const [k, a] of Object.entries({ ...AXES, ...TRIAL_AXES })) { POLE[a.L] = [k, -1]; POLE[a.R] = [k, 1]; }
+
+// ───────── 문항 (docs/02-items-values.md 원본) ─────────
+// v0.4 — 판단 진술만, 부 가중치 없음, 🗨 조율 선택지는 해당 축 결측 처리. 근거: docs/05-full-test-validation.md
+const ITEMS = {
+  // ① 책임 ↔ 이해
+  V01: { axis: 'RESP', type: 'sjt', q: '친구가 같은 약속을 두 번째 어겼다. 진심으로 미안하다고 한다.', opts: [
+    ['진심으로 사과했다면 한 번 더 믿어주는 게 맞아요', [['이해', 2]]],
+    ['사과가 진심이어도, 행동이 그대로라면 사과만으로는 부족해요', [['책임', 2]]],
+    ['두 번째인 건 마음에 걸려도, 사과가 진심이라면 이번엔 믿어주는 쪽이 맞아요', [['이해', 1]]],
+    ['사과는 받아도, 다음엔 그 친구가 먼저 행동으로 보여줘야 해요', [['책임', 1]]]] },
+  V02: { axis: 'RESP', type: 'sjt', q: '함께 준비한 발표를 동료가 망쳤다. 알고 보니 전날 가족 일로 거의 잠을 못 잤다. 이 일을 두고 동료를 어떻게 보는 게 맞을까?', opts: [
+    ['안타깝지만 맡은 일의 결과는 사정과 별개로 본인 몫이에요', [['책임', 2]]],
+    ['사정은 이해해도 결과에 대한 책임이 사라지진 않아요', [['책임', 1]]],
+    ['결과가 좋지 않았어도, 이번만큼은 그 사정을 더 무겁게 봐주는 게 맞아요', [['이해', 1]]],
+    ['그런 사정이었다면 이번 결과로 그 사람을 판단하면 안 돼요', [['이해', 2]]]] },
+  V03: { axis: 'RESP', type: 'slider', q: '친구가 내 일을 걱정하다가, 다른 친구에게 의논하면서 내가 털어놓은 비밀을 말했다.', L: ['좋은 뜻이었어도 비밀을 말한 책임은 그대로예요', '책임'], R: ['걱정해서 그랬다면 어느 정도는 이해할 수 있는 일이에요', '이해'] },
+  V04: { axis: 'RESP', type: 'slider', q: '동료가 다른 급한 업무를 먼저 처리하느라, 함께 맡은 일의 마감을 놓쳤다.', L: ['급한 일이 있었다면 책임을 묻기 어려운 일이에요', '이해'], R: ['이유가 있어도 마감을 놓친 책임은 남아요', '책임'] },
+  // ② 자율 ↔ 보살핌
+  V05: { axis: 'BOUND', type: 'sjt', q: '친한 친구가 무리하게 대출을 받아 창업하려 한다. 여러 번 말렸지만 마음을 바꾸지 않는다.', opts: [
+    ['충분히 말했다면, 그다음은 그 친구가 정할 일이에요', [['자율', 2]]],
+    ['충분히 말했어도, 가까운 사이라면 한 번 더 막아보는 게 도리예요', [['보살핌', 2]]],
+    ['결정은 존중하되, 위험을 줄일 방법은 계속 같이 찾아줘야 해요', [['보살핌', 1]]],
+    ['걱정은 남아도, 결정을 존중하고 도움은 그 친구가 청할 때 주는 게 맞아요', [['자율', 1]]]] },
+  V06: { axis: 'BOUND', type: 'sjt', q: '친한 친구가 한동안 연락이 뜸하더니 "요즘 좀 혼자 있고 싶어"라고만 한다.', opts: [
+    ['이유를 묻지 않고 혼자 둬주는 게 존중이에요', [['자율', 2]]],
+    ['걱정되더라도 혼자 있고 싶다는 말을 먼저 존중하고, 필요하면 연락하라고 한 번 말해두는 게 맞아요', [['자율', 1]]],
+    ['혼자 두더라도, 괜찮은지는 한 번 확인하는 게 가까운 사이의 몫이에요', [['보살핌', 1]]],
+    ['가까운 사이라면 무슨 일인지 알 때까지 곁에서 챙기는 게 맞아요', [['보살핌', 2]]]] },
+  V07: { axis: 'BOUND', type: 'sjt', q: '동생이 건강검진에서 재검 판정을 받았는데, 바쁘다며 병원을 계속 미룬다.', opts: [
+    ['몇 번 권했다면, 그다음은 본인이 정할 몫이에요', [['자율', 2]]],
+    ['왜 미루는지 들어보고, 결정은 본인에게 맡기는 게 맞아요', [['자율', 1]]],
+    ['결정은 본인 몫이어도, 재검 같은 일은 한두 번 더 챙겨서 권하는 게 맞아요', [['보살핌', 1]]],
+    ['예약을 대신 잡아서라도 데려가는 게 가족의 도리예요', [['보살핌', 2]]]] },
+  V08: { axis: 'BOUND', type: 'slider', q: '어느 쪽에 더 가까운가요?', L: ['아끼는 사이라면, 위험해 보이는 선택엔 적극적으로 끼어드는 게 맞아요', '보살핌'], R: ['아끼는 사이라도, 위험해 보이는 선택 역시 그 사람이 정할 몫이에요', '자율'] },
+  // ④ 솔직 ↔ 조화 — 말할지 말지
+  V13: { axis: 'CANDOR', type: 'sjt', q: '친한 친구가 결혼할 사람을 소개해줬다. 친구는 무척 행복해 보이는데, 그 사람은 돈 관리가 꽤 허술해 보였다.', opts: [
+    ['묻지 않았어도, 친구라면 본 것을 말해주는 게 맞아요', [['솔직', 2]]],
+    ['먼저 꺼내진 않더라도, 친구가 물어본다면 본 그대로 말해야 해요', [['솔직', 1]]],
+    ['물어보더라도, 행복한 시기라면 걱정을 얼마나 말할지는 조절하는 게 맞아요', [['조화', 1]]],
+    ['행복해하고 있다면, 관계를 흔들 수 있는 걱정은 말하지 않는 게 맞아요', [['조화', 2]]]] },
+  V14: { axis: 'CANDOR', type: 'sjt', q: '부모님이 오래 다닌 단골 식당의 음식이 예전 같지 않다. 부모님은 여전히 최고라며 자주 가자고 하신다.', opts: [
+    ['묻지 않으셔도, 느낀 대로 말씀드리는 게 맞아요', [['솔직', 2]]],
+    ['맛이 어떠냐고 물으시면 그때는 사실대로 말씀드려야 해요', [['솔직', 1]]],
+    ['물으셔도 단정적으로 평가하기보다, 좋아하시는 마음을 생각해 부드럽게 넘기는 게 맞아요', [['조화', 1]]],
+    ['물으셔도, 좋아하시는 마음을 지키는 쪽으로 답하는 게 맞아요', [['조화', 2]]]] },
+  V15: { axis: 'CANDOR', type: 'slider', q: '어느 쪽에 더 가까운가요?', L: ['상대 마음을 지키려는 작은 거짓말은 괜찮아요', '조화'], R: ['작은 거짓말이라도, 가까운 사이일수록 하지 않는 게 맞아요', '솔직'] },
+  V16: { axis: 'CANDOR', type: 'slider', q: '어느 쪽에 더 가까운가요?', L: ['듣기 불편한 말이라도 상대가 알아야 할 일이면, 때를 고르더라도 결국은 말해주는 게 맞아요', '솔직'], R: ['알아야 할 일이라도, 관계를 크게 해칠 것 같으면 덮어두는 게 나을 수 있어요', '조화'] },
+  // ⑤ 구분 ↔ 헤아림 — 그 순간 드러난 감정이 결론에 들어가도 되는가
+  V17: { axis: 'EMO', type: 'sjt', q: '회의에서 동료가 내 제안에 눈에 띄게 서운한 표정이다. 하지만 아무 말도 하지 않는다.', opts: [
+    ['말로 하지 않은 감정은 판단에 넣지 않는 게 맞아요', [['구분', 2]]],
+    ['서운하다면 말해달라고 한 번 청하는 게 맞아요. 짐작으로 움직이진 않아요', [['구분', 1]]],
+    ['서운한 이유를 단정하진 않되, 그런 표정이 보였다는 건 제안을 다듬을 때 조금 고려하는 게 맞아요', [['헤아림', 1]]],
+    ['말하지 않아도 서운해 보인다면, 그 마음을 반영해 제안을 바꾸는 게 맞아요', [['헤아림', 2]]]] },
+  V18: { axis: 'EMO', type: 'sjt', q: '언쟁 중에 상대가 울어서 그날은 대화를 멈췄다. 며칠 뒤 다시 이야기하게 됐다. 나는 여전히 내용상 내 말이 맞다고 생각한다.', opts: [
+    ['그만큼 힘들어한 일이라면, 이번엔 내가 한발 물러서는 게 맞아요', [['헤아림', 2]]],
+    ['내 입장은 남아 있어도, 그만큼 힘들어했다면 이번 결론에선 상대 마음에 조금 더 무게를 둬야 해요', [['헤아림', 1]]],
+    ['마음은 충분히 살피되, 결론은 내용대로 내야 해요', [['구분', 1]]],
+    ['울었던 것과 누가 맞는지는 별개라, 하던 이야기를 그대로 이어가야 해요', [['구분', 2]]]] },
+  V19: { axis: 'EMO', type: 'sjt', q: '상대가 내 어떤 행동 때문에 상처받았다고 한다. 나는 그 행동이 문제였다고 생각하지 않는다.', opts: [
+    ['상대가 상처받았다면, 내 의도와 상관없이 그 행동은 바꾸는 게 맞아요', [['헤아림', 2]]],
+    ['내 행동이 잘못이라 생각하진 않아도, 상대가 실제로 상처받았다면 그 때문에 조금은 바꾸는 게 맞아요', [['헤아림', 1]]],
+    ['상처는 살피되, 행동을 바꿀지는 그 행동이 어땠는지로 정해야 해요', [['구분', 1]]],
+    ['내 행동에 문제가 없었다면, 상대 감정 때문에 바꿀 필요는 없어요', [['구분', 2]]]] },
+  V20: { axis: 'EMO', type: 'slider', q: '어느 쪽에 더 가까운가요?', L: ['상대가 속상해해도, 결정은 내용으로 내리는 게 맞아요', '구분'], R: ['상대가 속상해한다면, 그 마음도 결정에 넣는 게 맞아요', '헤아림'] },
+  // 수평↔연륜 시험 문항 (비채점)
+  S1: { axis: 'SENIOR', type: 'sjt', trial: true, q: '어느 팀은 회의에서 연차가 높은 사람부터 차례로 의견을 말하고, 신입은 마지막에 말한다.', opts: [
+    ['연차와 상관없이 누구나 먼저 말할 수 있어야 해요', [['수평', 2]]],
+    ['순서는 그럴 수 있어도, 신입 의견도 똑같은 무게로 다뤄야 해요', [['수평', 1]]],
+    ['선배 의견부터 듣는 건 팀의 질서로 괜찮다고 봐요', [['연륜', 1]]],
+    ['오래 몸담은 사람이 먼저 말하는 게 팀에 대한 예의예요', [['연륜', 2]]]] },
+  S2: { axis: 'SENIOR', type: 'sjt', trial: true, q: '어느 등산 모임은 나이가 가장 많은 회원이 모임 일정을 정하는 게 관례다.', opts: [
+    ['나이와 상관없이 일정은 모두 같이 정해야 해요', [['수평', 2]]],
+    ['어른 의견을 먼저 묻는 건 좋지만, 정하는 건 다 같이 해야 해요', [['수평', 1]]],
+    ['다 같이 의견을 내고, 마지막 결정은 가장 연장자가 하는 게 좋아요', [['연륜', 1]]],
+    ['가장 어른이 정하는 게 모임을 지키는 질서예요', [['연륜', 2]]]] },
+  S3: { axis: 'SENIOR', type: 'sjt', trial: true, q: '어느 회사는 휴가 날짜가 겹치면 연차가 높은 사람이 먼저 고른다.', opts: [
+    ['연차와 상관없이 신청 순서나 추첨으로 정해야 해요', [['수평', 2]]],
+    ['연차를 조금 고려할 순 있어도, 매번 우선권을 주는 건 아니라고 봐요', [['수평', 1]]],
+    ['오래 다닌 사람에게 먼저 고를 기회를 주는 것도 괜찮다고 봐요', [['연륜', 1]]],
+    ['오래 다닌 사람을 먼저 챙기는 게 회사의 예의예요', [['연륜', 2]]]] },
+  S4: { axis: 'SENIOR', type: 'slider', trial: true, q: '어느 쪽에 더 가까운가요?', L: ['나이나 연차가 많은 사람의 의견에 더 무게를 두는 게 맞아요', '연륜'], R: ['나이나 연차와 상관없이, 누구의 의견이든 같은 무게여야 해요', '수평'] },
+  // 미러 원본 (비채점 — 기준 일관성 전용). V03·V04는 채점 문항이자 미러 원본
+  O3: { axis: 'CANDOR', type: 'slider', mirrorOnly: true, q: '친구가 내가 만든 걸 보고 돌려 말하지 않고 "솔직히 별로야"라고 했다.', L: ['솔직하게 말하는 게 오히려 나아요', '솔직'], R: ['사실이어도 말은 좀 다듬었어야 해요', '조화'] },
+  O4: { axis: 'RESP', type: 'slider', mirrorOnly: true, q: '연인이 바쁘다며 반나절 동안 연락이 없었다.', L: ['바빴다면 그럴 수 있어요', '이해'], R: ['바빠도 짧게라도 연락했어야 해요', '책임'] },
+  // 미러 — 원본과 좌우 문구 완전히 동일, 주어만 '나'
+  M1: { axis: 'RESP', type: 'slider', mirror: 'V03', q: '내가 친구 일을 걱정하다가, 다른 친구에게 의논하면서 친구가 털어놓은 비밀을 말했다.', L: ['좋은 뜻이었어도 비밀을 말한 책임은 그대로예요', '책임'], R: ['걱정해서 그랬다면 어느 정도는 이해할 수 있는 일이에요', '이해'] },
+  M2: { axis: 'RESP', type: 'slider', mirror: 'V04', q: '내가 다른 급한 업무를 먼저 처리하느라, 함께 맡은 일의 마감을 놓쳤다.', L: ['급한 일이 있었다면 책임을 묻기 어려운 일이에요', '이해'], R: ['이유가 있어도 마감을 놓친 책임은 남아요', '책임'] },
+  M3: { axis: 'CANDOR', type: 'slider', mirror: 'O3', q: '친구가 만든 걸 보고 내가 돌려 말하지 않고 "솔직히 별로야"라고 했다.', L: ['솔직하게 말하는 게 오히려 나아요', '솔직'], R: ['사실이어도 말은 좀 다듬었어야 해요', '조화'] },
+  M4: { axis: 'RESP', type: 'slider', mirror: 'O4', q: '내가 바쁘다는 이유로 반나절 동안 연인에게 연락을 못 했다.', L: ['바빴다면 그럴 수 있어요', '이해'], R: ['바빠도 짧게라도 연락했어야 해요', '책임'] },
+};
+
+const VICES = {
+  C01: ['잘못이 드러나면 상황이나 남 탓을 한다', '책임 전가'],
+  C02: ['사과는 하는데 같은 행동을 반복한다', '말뿐인 사과'],
+  C03: ['"널 위해서"라며 내 선택에 간섭한다', '통제'],
+  C04: ['싫다고 했는데 다시 조르거나 밀어붙인다', '거절 무시'],
+  C05: ['남에게 요구하는 걸 자기는 안 지킨다', '이중잣대'],
+  C06: ['앞에서 하는 말과 뒤에서 하는 말이 다르다', '위선'],
+  C07: ['직접 말하지 않고 말투나 침묵으로 불만을 드러낸다', '수동공격'],
+  C08: ['울거나 화를 내서 상대가 물러서게 만든다', '감정 무기화'],
+  C09: ['남을 깎아내려서 자기를 높인다', '평가절하'],
+  C10: ['남의 호의를 당연하게 여긴다', '감사 없음'],
+  C11: ['원하는 대로 움직이게 하려고 사실을 꾸며 말한다', '조종하는 거짓'],
+  C12: ['자기 사적인 일은 가까운 사람에게도 잘 말하지 않는다', '비공개'],
+  C13: ['자기가 틀렸다는 걸 끝까지 인정하지 않는다', '오류 불인정'],
+  C14: ['결정을 잘 못 내리고 남에게 미룬다', '우유부단'],
+  C15: ['싫어도 싫다고 잘 말하지 못한다', '자기주장 부족'],
+};
+const VICE_SETS = [['C01','C06','C09','C12','C14'],['C02','C05','C08','C11','C15'],['C03','C04','C07','C10','C13'],['C01','C02','C03','C11','C12'],['C04','C05','C06','C13','C14'],['C07','C08','C09','C10','C15']];
+
+const TRAITS = {
+  T01: ['자기 일은 끝까지 책임진다', '도덕'], T02: ['자기 마음을 숨기지 않는다', '도덕'],
+  T03: ['내 선택과 경계를 존중한다', '도덕'], T04: ['누구에게나 같은 기준으로 대한다', '도덕'],
+  T05: ['다정하고 잘 챙겨준다', '도덕'], T06: ['"내가 틀렸어"라고 말할 줄 안다', '도덕'],
+  T07: ['자기 분야에서 일을 잘한다', '매력'], T08: ['누구와도 잘 어울린다', '매력'],
+  T09: ['같이 있으면 재미있다', '매력'], T10: ['앞장서서 이끌고 추진한다', '매력'],
+};
+const TRAIT_SETS = [['T01','T03','T07','T09','T05'],['T02','T04','T06','T08','T10'],['T01','T02','T08','T09','T06'],['T03','T04','T05','T07','T10']];
+
+// 만든 사람 예상 응답 (02 문서 '기준 사례 검증' 표). sjt=선택지 번호, slider=0~4 칸
+const PREDICT = {}; // v0.4 문항 전면 교체로 예상 응답 비교 폐기
+
+// ───────── 축 색 ─────────
+const AXIS_STYLE = {
+  RESP:   { c: '#3182f6', tint: '#e8f3ff' },
+  BOUND:  { c: '#03a867', tint: '#e5f8ef' },
+  CANDOR: { c: '#f2780c', tint: '#fff1e4' },
+  EMO:    { c: '#e5487f', tint: '#fdebf2' },
+};
+
+// ───────── 결과 문장 (초안 — 03 문서로 옮길 것) ─────────
+const POLE_TEXT = {
+  책임: { and: '책임을 분명히 보고', adj: '책임을 분명히 보는',
+    strong: '사정은 사정이고, 결과에 대한 책임은 따로 남는다고 봐요.', mild: '사정은 듣지만, 그것만으로 책임이 사라지진 않는다고 봐요.',
+    good: '약속과 결과를 가볍게 넘기지 않아 믿고 맡길 수 있어요.', care: '사정은 충분히 듣지만 책임은 따로 보기 때문에, 상대는 "이해는 해주는데 봐주지는 않는다"고 느낄 수 있어요.' },
+  이해: { and: '사정을 먼저 헤아리고', adj: '사정을 먼저 헤아리는',
+    strong: '잘못이 있을 때 결과보다 그 사람의 사정을 먼저 봐야 한다고 생각해요.', mild: '책임도 중요하지만, 사정에 따라 다르게 볼 여지를 남겨둬요.',
+    good: '실수한 사람이 다시 일어설 여지를 줘요.', care: '사정을 봐주다 보면 같은 일이 반복될 수 있어요.' },
+  자율: { and: '상대의 선택을 존중하고', adj: '상대의 선택을 존중하는',
+    strong: '충분히 말한 뒤라면, 선택은 그 사람의 몫이라고 봐요.', mild: '조언은 하되, 결정은 상대에게 맡기는 게 맞다고 봐요.',
+    good: '곁에 있어도 숨 막히지 않는 편안한 거리를 줘요.', care: '존중이 때로는 무관심이나 거리감으로 느껴질 수 있어요.' },
+  보살핌: { and: '아끼는 사람을 적극적으로 챙기고', adj: '아끼는 사람을 적극적으로 챙기는',
+    strong: '아끼는 사람이 위험한 선택을 하면, 끼어드는 게 도리라고 봐요.', mild: '존중하면서도 필요하면 한 발 더 다가가 챙기는 게 맞다고 봐요.',
+    good: '힘들 때 먼저 손 내밀어 주는 든든한 사람이에요.', care: '걱정에서 나온 개입이 상대에겐 간섭처럼 느껴질 수 있어요.' },
+  솔직: { and: '알아야 할 말은 해야 한다고 보고', adj: '알아야 할 말은 해야 한다고 보는',
+    strong: '듣기 불편한 말이라도, 상대가 알아야 할 일이면 말해야 한다고 봐요.', mild: '먼저 꺼내진 않더라도, 물어본다면 본 그대로 말하는 게 맞다고 봐요.',
+    good: '속을 짐작하게 하지 않아서 대하기 편해요.', care: '맞는 말이어도 때와 상대에 따라 아프게 전달될 수 있어요.' },
+  조화: { and: '관계의 온도를 살피고', adj: '관계의 온도를 살피는',
+    strong: '말해서 관계가 상할 것 같다면, 덮어두는 것도 마음을 지키는 방법이라고 봐요.', mild: '필요하면 말하되, 먼저 꺼내는 건 신중해야 한다고 봐요.',
+    good: '말 한마디의 온도를 살펴 관계를 부드럽게 지켜요.', care: '하고 싶은 말을 삼키다 보면 서운함이 쌓일 수 있어요.' },
+  구분: { and: '감정과 결론을 구분하고', adj: '감정과 결론을 구분하는',
+    strong: '상대가 속상해해도, 결론은 내용으로 내야 한다고 봐요.', mild: '마음은 살피되, 결론까지 감정에 맡기진 않아요.',
+    good: '감정이 격해진 순간에도 기준이 흔들리지 않아요.', care: '상대는 마음을 살펴준 것보다 결론만 기억할 수 있어요.' },
+  헤아림: { and: '상대의 마음까지 결정에 담고', adj: '상대의 마음까지 결정에 담는',
+    strong: '상대가 힘들어한다면, 그 마음도 결정에 들어가야 한다고 봐요.', mild: '결론을 내기 전에, 상대 마음부터 다뤄야 한다고 봐요.',
+    good: '결정 앞에서도 사람을 먼저 보는 따뜻함이 있어요.', care: '마음을 챙기다 보면 내 판단을 뒤로 미루게 될 수 있어요.' },
+};
+const BALANCED_TEXT = {
+  RESP: '잘못 앞에서 책임과 사정을 함께 저울질해요.',
+  BOUND: '존중과 챙김 사이에서 상대와 상황을 보고 거리를 정해요.',
+  CANDOR: '말할 때와 덮어둘 때를 상황에 따라 가려요.',
+  EMO: '상대 마음을 살피는 것과 결론을 내용대로 내는 것 사이에서 균형을 잡아요.',
+};
+const VICE_PHRASE = {
+  C01: '남 탓하는 태도', C02: '말뿐인 사과', C03: '"널 위해서"라는 간섭', C04: '거절을 무시하는 것',
+  C05: '이중잣대', C06: '앞뒤가 다른 말', C07: '말 대신 침묵이나 말투로 하는 불만 표현', C08: '감정으로 상대를 물러서게 하는 것',
+  C09: '남을 깎아내리는 태도', C10: '호의를 당연하게 여기는 태도', C11: '사람을 움직이려는 거짓말', C12: '사적인 일을 말하지 않는 것',
+  C13: '끝까지 잘못을 인정하지 않는 태도', C14: '우유부단함', C15: '싫다고 말하지 못하는 것',
+};
+const hasBatchim = w => { const c = w.trim().replace(/["'”’)]+$/, '').slice(-1).charCodeAt(0); return c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 !== 0; };
+const josa = (w, a, b) => w + (hasBatchim(w) ? a : b);
+
+// ───────── 진행 순서 ─────────
+// SEQ = 제시 순서 (같은 축 연속 금지, 미러 원본 O4는 M4와 멀리), ORDER = 채점 대상 가치 축 문항
+const SEQ = ['V01','V05','S1','V13','V17','V02','V06','O4','S2','V14','V18','V03','V07','S3','V15','V19','V04','V08','O3','S4','V16','V20'];
+const ORDER = SEQ.filter(id => !ITEMS[id].trial && !ITEMS[id].mirrorOnly);
+const TRIAL = SEQ.filter(id => ITEMS[id].trial);
+const STEPS = [{ kind: 'intro' }];
+SEQ.forEach(id => STEPS.push({ kind: 'item', id, part: '1부 · 상황 판단' }));
+STEPS.push({ kind: 'break', title: '절반 왔어요', text: '이번엔 고르기만 하면 돼요.\n카드 5장 중에 가장 거슬리는 것 하나, 가장 덜 거슬리는 것 하나를 골라주세요.' });
+VICE_SETS.forEach((s, i) => STEPS.push({ kind: 'md', set: s, pool: 'vice', idx: i }));
+STEPS.push({ kind: 'tie', pool: 'vice' });
+STEPS.push({ kind: 'break', title: '거의 다 왔어요', text: '이번엔 가까이 두고 싶은 사람, 그리고 내가 한 일이라면 어떨지를 번갈아 물어볼게요.' });
+// 미러를 연달아 두면 "아까 질문을 나로 바꿨네"를 알아채고 일관되게 답하려 함 → 사람 볼 때 화면 사이에 분산
+['M1','M4','M2','M3'].forEach((id, i) => { STEPS.push({ kind: 'md', set: TRAIT_SETS[i], pool: 'trait', idx: i }); STEPS.push({ kind: 'item', id, part: '3부 · 내가 했다면' }); });
+STEPS.push({ kind: 'tie', pool: 'trait' });
+STEPS.push({ kind: 'result' });
+const TOTAL_Q = STEPS.filter(s => s.kind === 'item' || s.kind === 'md').length;
+const POOLS = {
+  vice:  { cards: VICES, sets: VICE_SETS, top: 5, part: '2부 · 이럴 때 거슬려요', q: '사람의 이런 모습 중에서', help: '가장 거슬리는 것 하나, 가장 덜 거슬리는 것 하나를 골라주세요', neg: '가장 거슬림', pos: '덜 거슬림',
+           tieQ: n => n === 1 ? '비슷하게 거슬리는 것들이에요.\n이 중 가장 거슬리는 것 하나만 골라주세요' : `비슷하게 거슬리는 것들이에요.\n더 거슬리는 순서대로 ${n}개만 골라주세요` },
+  trait: { cards: TRAITS, sets: TRAIT_SETS, top: 3, part: '3부 · 사람을 볼 때', q: '가까이 두고 싶은 사람을 떠올려보세요', help: '가장 중요한 것 하나, 가장 덜 중요한 것 하나를 골라주세요', neg: '가장 중요', pos: '덜 중요',
+           tieQ: n => n === 1 ? '비슷하게 중요한 것들이에요.\n이 중 가장 중요한 것 하나만 골라주세요' : `비슷하게 중요한 것들이에요.\n더 중요한 순서대로 ${n}개만 골라주세요` },
+};
+
+// ───────── 상태 ─────────
+let S = { step: 0, ans: {}, md: {}, flags: {}, start: Date.now(), dir: 1, perm: {} };
+try { const saved = JSON.parse(localStorage.getItem('naran-values-proto-v45')); if (saved) S = Object.assign(S, saved); } catch (e) {}
+const save = () => { try { localStorage.setItem('naran-values-proto-v45', JSON.stringify(S)); } catch (e) {} };
+
+const $app = document.getElementById('app');
+const $next = document.getElementById('next');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+function qNumber(i) { return STEPS.slice(0, i + 1).filter(s => s.kind === 'item' || s.kind === 'md').length; }
+function header(i) {
+  const n = qNumber(i);
+  return `<div class="top"><button class="back" onclick="go(-1)" aria-label="이전">‹</button>
+    <div class="bar"><i style="width:${n / TOTAL_Q * 100}%"></i></div><span class="count">${n}/${TOTAL_Q}</span></div>`;
+}
+function flagBox(key) {
+  const f = S.flags[key];
+  return `<div class="flag"><button class="flag-btn ${f ? 'on' : ''}" onclick="toggleFlag('${key}')">${f ? '⚑ 애매해요 표시함' : '⚐ 이 문항 애매해요'}</button>
+    ${f ? `<textarea placeholder="어디가 애매했나요? (예: 둘 다 아니에요 / 정답이 보여요 / 상황이 잘 안 그려져요)" oninput="S.flags['${key}']=this.value||' ';save()">${esc(f.trim())}</textarea>` : ''}</div>`;
+}
+const isGeneric = q => q.startsWith('어느 쪽');
+
+function render() {
+  const st = STEPS[S.step];
+  window.scrollTo(0, 0);
+  if (st.kind === 'intro') {
+    $app.innerHTML = `<div style="padding-top:48px">
+      <div class="part">나란 · 가치관 검사 시험판</div>
+      <h1>이 검사가 제대로<br>작동하는지 봐주세요</h1>
+      <p class="lead">평소처럼 솔직하게 풀면 돼요. 약 6~7분 걸려요.</p>
+      <div class="card" style="margin-top:28px"><h3>풀면서 해줄 일 하나</h3>
+        <p class="lead" style="margin:0;font-size:15px">답하기 애매하거나, 정답이 뻔히 보이거나, 내 생각이 선택지에 없으면 아래 <b>⚐ 이 문항 애매해요</b>를 눌러 한 줄 남겨주세요.</p></div>
+      <div class="card"><h3>끝나면</h3><p class="lead" style="margin:0;font-size:15px">맨 아래 <b>결과 복사</b>를 눌러 Claude에게 붙여넣어 주세요.</p></div></div>`;
+    setNext('시작하기', true);
+  } else if (st.kind === 'break') {
+    $app.innerHTML = `<div style="padding-top:120px"><h1>${st.title}</h1><p class="lead" style="white-space:pre-line">${st.text}</p></div>`;
+    setNext('계속하기', true);
+  } else if (st.kind === 'item') {
+    renderItem(st);
+  } else if (st.kind === 'md') {
+    renderMd(st);
+  } else if (st.kind === 'tie') {
+    const t = tieInfo(st.pool);
+    if (!t) { delete S.md[st.pool + 'Tie']; S.step += S.dir; save(); return render(); }
+    renderTie(st, t);
+  } else {
+    renderResult();
+  }
+}
+
+function renderItem(st) {
+  const it = ITEMS[st.id], a = S.ans[st.id];
+  let body = '';
+  if (it.type === 'sjt') {
+    // 선택지 순서는 사람마다 섞되 한 번 정해지면 고정. 저장·채점은 원래 인덱스로
+    if (!S.perm) S.perm = {};
+    if (!S.perm[st.id]) { const p = it.opts.map((_, i) => i); for (let i = p.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [p[i], p[j]] = [p[j], p[i]]; } S.perm[st.id] = p; save(); }
+    body = S.perm[st.id].map(i => `<button class="opt ${a === i ? 'sel' : ''}" onclick="pick('${st.id}',${i})">${esc(it.opts[i][0])}</button>`).join('');
+  } else {
+    const lc = a === 0 ? 'on' : a === 1 ? 'half' : a >= 3 ? 'dim' : '';
+    const rc = a === 4 ? 'on' : a === 3 ? 'half' : a !== undefined && a <= 1 ? 'dim' : '';
+    const dotCls = ['l', 'l near', 'm', 'r near', 'r'];
+    body = `<div class="poles">
+        <button class="pole l ${lc}" onclick="pick('${st.id}',${a === 0 ? 1 : 0})" title="한 번 더 누르면 '가까워요'로 바뀌어요">${esc(it.L[0])}</button>
+        <button class="pole r ${rc}" onclick="pick('${st.id}',${a === 4 ? 3 : 4})" title="한 번 더 누르면 '가까워요'로 바뀌어요">${esc(it.R[0])}</button></div>
+      <div class="dots">${[0,1,2,3,4].map(i => `<button class="dot ${dotCls[i]} ${a === i ? 'sel' : ''}" onclick="pick('${st.id}',${i})" aria-label="${['왼쪽 매우','왼쪽','반반','오른쪽','오른쪽 매우'][i]}"></button>`).join('')}</div>
+      <div class="dothint"><span>← 왼쪽</span><span>반반</span><span>오른쪽 →</span></div>`;
+  }
+  const sit = it.type === 'slider' && !isGeneric(it.q);
+  $app.innerHTML = header(S.step) + `<div class="part">${st.part}</div>
+    ${sit ? `<p class="sit">상황</p><h2>${esc(it.q)}</h2><p class="help" style="margin-top:-8px">내 생각은 어느 쪽에 더 가까운가요?</p>` : `<h2>${esc(it.q)}</h2>`}
+    ${body}${flagBox(st.id)}`;
+  setNext('다음', a !== undefined);
+}
+
+function renderMd(st) {
+  const P = POOLS[st.pool], key = st.pool + st.idx, m = S.md[key] || {};
+  $app.innerHTML = header(S.step) + `<div class="part">${P.part}</div>
+    <h2>${P.q}</h2><p class="help">${P.help}</p>
+    <div class="legend"><span class="n">${P.neg}</span><span class="p">${P.pos}</span></div>
+    ${st.set.map(id => `<div class="md-card ${m.w === id ? 'neg' : ''} ${m.b === id ? 'pos' : ''}"><span class="t">${esc(P.cards[id][0])}</span>
+      <button class="md-btn neg ${m.w === id ? 'sel' : ''}" onclick="pickMd('${key}','w','${id}')">${P.neg}</button>
+      <button class="md-btn pos ${m.b === id ? 'sel' : ''}" onclick="pickMd('${key}','b','${id}')">${P.pos}</button></div>`).join('')}
+    ${flagBox(key)}`;
+  setNext('다음', m.w && m.b);
+}
+
+function renderTie(st, t) {
+  const P = POOLS[st.pool], key = st.pool + 'Tie';
+  let rec = S.md[key];
+  if (!rec || rec.ids.join() !== t.ids.join()) rec = S.md[key] = { ids: t.ids, need: t.need, picks: [] };
+  $app.innerHTML = `<div class="top"><button class="back" onclick="go(-1)" aria-label="이전">‹</button><div class="bar"><i style="width:${qNumber(S.step) / TOTAL_Q * 100}%"></i></div><span class="count">추가 1문항</span></div>
+    <div class="part">${P.part} · 순위 정하기</div>
+    <h2 style="white-space:pre-line">${P.tieQ(t.need)}</h2>
+    ${t.ids.map(id => { const n = rec.picks.indexOf(id); return `<button class="tie ${st.pool === 'trait' ? 'trait' : ''} ${n >= 0 ? 'sel' : ''}" onclick="pickTie('${key}','${id}')"><span class="no">${n >= 0 ? n + 1 : ''}</span>${esc(P.cards[id][0])}</button>`; }).join('')}`;
+  setNext('다음', rec.picks.length === t.need);
+}
+
+function setNext(label, enabled) { $next.parentElement.style.display = ''; $next.textContent = label; $next.disabled = !enabled; }
+
+window.go = d => { S.dir = d; S.step = Math.max(0, Math.min(STEPS.length - 1, S.step + d)); save(); render(); };
+window.pick = (id, v) => { S.ans[id] = v; save(); render(); if (ITEMS[id].type === 'sjt') setTimeout(() => go(1), 220); };
+window.pickMd = (key, which, id) => {
+  const m = S.md[key] = S.md[key] || {};
+  const other = which === 'w' ? 'b' : 'w';
+  if (m[other] === id) delete m[other];
+  m[which] = m[which] === id ? undefined : id;
+  save(); render();
+};
+window.pickTie = (key, id) => {
+  const r = S.md[key], i = r.picks.indexOf(id);
+  if (i >= 0) r.picks.splice(i, 1); else if (r.picks.length < r.need) r.picks.push(id);
+  save(); render();
+};
+window.toggleFlag = key => { if (S.flags[key]) delete S.flags[key]; else S.flags[key] = ' '; save(); render(); };
+$next.onclick = () => go(1);
+
+// ───────── 채점 ─────────
+function weightsOf(id, v) {
+  const it = ITEMS[id];
+  if (it.type === 'sjt') return it.opts[v][1];
+  if (v === 2) return [];
+  return v < 2 ? [[it.L[1], 2 - v]] : [[it.R[1], v - 2]];
+}
+function signedOnAxis(id, v) {
+  let s = 0;
+  for (const [p, n] of weightsOf(id, v)) { const [ax, sg] = POLE[p]; if (ax === ITEMS[id].axis) s += sg * n; }
+  return s;
+}
+function scoreAxes() {
+  const raw = {}, dirs = {}, valid = {};
+  for (const k in AXES) { raw[k] = 0; dirs[k] = []; valid[k] = 0; }
+  for (const id of ORDER) {
+    const v = S.ans[id]; if (v === undefined) continue;
+    const it = ITEMS[id], own = it.axis;
+    if (it.type === 'sjt' && it.opts[v][2] === 'dialog') continue; // 조율 선택 = 이 축에선 결측
+    const sv = signedOnAxis(id, v);
+    raw[own] += sv; valid[own]++;
+    dirs[own].push(Math.sign(sv));
+  }
+  const out = {};
+  for (const k in AXES) {
+    const score = valid[k] ? Math.max(-100, Math.min(100, raw[k] / (2 * valid[k]) * 100)) : 0;
+    const nz = dirs[k].filter(x => x !== 0);
+    const pos = nz.filter(x => x > 0).length, agree = Math.max(pos, nz.length - pos);
+    let conf = '상황에 따라 달라요';
+    if (nz.length >= 3 && agree === nz.length) conf = '답이 한쪽으로 모였어요';
+    else if (nz.length >= 3 && agree === nz.length - 1) conf = '대체로 그쪽이에요';
+    const a = AXES[k], abs = Math.abs(score), pole = score < 0 ? a.L : a.R;
+    const level = abs < 20 ? 'bal' : abs >= 60 ? 'strong' : 'mild';
+    const band = level === 'bal' ? `${a.L}과 ${a.R} 사이` : `${level === 'strong' ? '뚜렷하게' : '약간'} ${pole} 쪽`;
+    const desc = (level === 'bal' ? BALANCED_TEXT[k] : POLE_TEXT[pole][level]) + (conf === '상황에 따라 달라요' && level !== 'bal' ? ' 다만 상황에 따라 판단이 꽤 달라져요.' : '');
+    out[k] = { score, band, conf, level, pole, desc };
+  }
+  return out;
+}
+function baseMd(pool) {
+  const P = POOLS[pool], sc = {};
+  for (const id in P.cards) sc[id] = 0;
+  P.sets.forEach((_, i) => { const m = S.md[pool + i]; if (!m) return; if (m.w) sc[m.w] += 0.5; if (m.b) sc[m.b] -= 0.5; });
+  return sc;
+}
+function tieInfo(pool) {
+  const sc = baseMd(pool), K = POOLS[pool].top;
+  const sorted = Object.entries(sc).sort((a, b) => b[1] - a[1]);
+  const edge = sorted[K - 1][1];
+  const above = sorted.filter(([, v]) => v > edge).length;
+  const ids = sorted.filter(([, v]) => v === edge).map(([id]) => id).sort();
+  const need = K - above;
+  if (ids.length <= need) return null;
+  return { ids, need: Math.min(need, 3) };
+}
+function scoreMd(pool) {
+  const sc = baseMd(pool), r = S.md[pool + 'Tie'];
+  if (r) r.picks.forEach((id, i) => { sc[id] += 0.1 * (r.picks.length - i) / r.picks.length; });
+  return Object.entries(sc).sort((a, b) => b[1] - a[1]);
+}
+function mirrorIndex() {
+  const pairs = [['M1', 'V03', 1], ['M2', 'V04', 1], ['M3', 'O3', -1], ['M4', 'O4', 1]];
+  const ds = [];
+  for (const [m, o, lenient] of pairs) {
+    if (S.ans[m] === undefined || S.ans[o] === undefined) continue;
+    ds.push(lenient * (signedOnAxis(m, S.ans[m]) - signedOnAxis(o, S.ans[o])));
+  }
+  const d = ds.reduce((a, b) => a + b, 0) / (ds.length || 1);
+  // 슬라이더 1~2칸 차이는 재검사 오차 수준 → 4쌍 중 3쌍 이상이 같은 방향일 때만 판정
+  const pos = ds.filter(x => x > 0).length, neg = ds.filter(x => x < 0).length;
+  const kind = pos >= 3 ? 'lenient' : neg >= 3 ? 'strict' : 'same';
+  // 'lenient'는 '나에게 너그러움'이 아니라 '남에게 거는 기대가 더 큼' — 애착 불안 등 다른 이유일 수 있어 도덕적 판단을 붙이지 않는다
+  const label = { lenient: '남에게 거는 기대가 나에게 거는 기대보다 큰 편이에요', strict: '같은 상황이면 남보다 나에게 더 엄격한 편이에요', same: '나와 남에게 비슷한 기준을 써요' }[kind];
+  // 전체 판정이 '비슷'이어도 한 쌍에서 2칸 이상 크게 다르면 그 상황만 짚는다
+  const PAIR_NAME = { M1: '비밀을 옮긴 일', M2: '마감을 놓친 일', M3: '솔직하게 말한 일', M4: '연락이 없던 일' };
+  const used = pairs.filter(([m, o]) => S.ans[m] !== undefined && S.ans[o] !== undefined);
+  const strictAt = used.filter((_, i) => ds[i] <= -2).map(([m]) => PAIR_NAME[m]);
+  const lenientAt = used.filter((_, i) => ds[i] >= 2).map(([m]) => PAIR_NAME[m]);
+  let note = '';
+  if (kind === 'same' && strictAt.length) note = ` 다만 ${strictAt.join(', ')} 같은 상황에선 남보다 자신에게 더 엄격했어요.`;
+  else if (kind === 'same' && lenientAt.length) note = ` 다만 ${lenientAt.join(', ')} 같은 상황에선 남에게 거는 기대가 더 컸어요.`;
+  // 크게 다른 쌍은 없어도, 작은 차이가 2쌍 이상 같은 방향이면 경향으로만 말한다
+  else if (kind === 'same' && neg >= 2 && pos === 0) note = ' 다만 내 일일 때 조금씩 더 엄격하게 보는 경향이 있어요.';
+  else if (kind === 'same' && pos >= 2 && neg === 0) note = ' 다만 남의 일일 때 조금씩 더 기대하는 경향이 있어요.';
+  return { d, ds, kind, label, note };
+}
+function dialogIndex() {
+  const tagged = ORDER.filter(id => ITEMS[id].type === 'sjt' && ITEMS[id].opts.some(o => o[2] === 'dialog'));
+  const picked = tagged.filter(id => S.ans[id] !== undefined && ITEMS[id].opts[S.ans[id]][2] === 'dialog');
+  const n = picked.length, of = tagged.length;
+  const level = n >= 3 ? 'strong' : n === 2 ? 'mild' : 'low';
+  return { n, of, level, picked };
+}
+function answerText(id, v) {
+  const it = ITEMS[id];
+  if (it.type === 'sjt') return `${'ABCD'[v]}. ${it.opts[v][0]}`;
+  return ['왼쪽 끝', '왼쪽', '반반', '오른쪽', '오른쪽 끝'][v] + ` (좌: ${it.L[0]} / 우: ${it.R[0]})`;
+}
+function answerShort(id, v) {
+  const it = ITEMS[id];
+  if (it.type === 'sjt') return it.opts[v][0];
+  if (v === 2) return '두 생각의 중간';
+  const side = v < 2 ? it.L[0] : it.R[0];
+  return (v === 0 || v === 4 ? '' : '어느 정도 ') + `"${side}"`;
+}
+
+// ───────── 공정 카드 (③ 축 대체: 이중잣대 민감도 + '같은 기준' 중시 + 실제 기준 일관성) ─────────
+function fairness(vices, traits, mi) {
+  const vS = (vices.find(([id]) => id === 'C05') || [0, 0])[1], tS = (traits.find(([id]) => id === 'T04') || [0, 0])[1];
+  const vLabel = vS >= 0.5 ? '특히 거슬려 해요' : vS <= -0.5 ? '다른 행동보다는 덜 거슬려 해요' : '다른 행동들과 비슷하게 거슬려 해요';
+  const tLabel = tS >= 0.5 ? '가장 먼저 보는 것 중 하나예요' : tS <= -0.5 ? '다른 것보다 덜 봐요' : '중간 정도로 봐요';
+  const sensitive = vS >= 0.5;
+  const summary = sensitive
+    ? { same: '이중잣대에 민감하고, 실제로도 나와 남에게 비슷한 기준을 써요.', strict: '이중잣대에 민감하고, 같은 상황이면 오히려 자신에게 더 엄격해요.', lenient: '이중잣대에 민감하면서도, 같은 상황에선 남에게 거는 기대가 조금 더 커요.' }[mi.kind]
+    : { same: '나와 남에게 비슷한 기준을 써요.', strict: '남의 사정은 봐주면서, 같은 상황의 자신에게는 더 엄격해요.', lenient: '같은 상황이라도 남에게 거는 기대가 나에게 거는 기대보다 조금 커요.' }[mi.kind];
+  return { vS, tS, vLabel, tLabel, sensitive, summary: summary + (mi.note || '') };
+}
+function trialScore() {
+  const done = TRIAL.filter(id => S.ans[id] !== undefined);
+  const raw = done.reduce((t, id) => t + signedOnAxis(id, S.ans[id]), 0);
+  return { raw, n: done.length, label: raw <= -3 ? '수평' : raw >= 3 ? '연륜' : '균형' };
+}
+
+// ───────── 서술 생성 ─────────
+// ───────── 보조 지표 (이미 받은 카드 응답에서 파생 — docs/06) ─────────
+// 상호성: 이중잣대(C05)를 거슬려 하고 '같은 기준'(T04)을 중시, 입장 바꾸기에서 남에게 기대가 크면 감점
+// 직접성: 말 대신 침묵·말투로 불만 드러내기(C07)를 얼마나 거슬려 하나 — '덜 거슬림'으로 고르면 음수
+// 수정성: '내가 틀렸어'(T06) 중시 + 말뿐인 사과(C02)·끝까지 인정 안 함(C13)을 거슬려 함
+function indicators(vices, traits, mi) {
+  const v = id => (vices.find(([x]) => x === id) || [0, 0])[1];
+  const t = id => (traits.find(([x]) => x === id) || [0, 0])[1];
+  return {
+    recip: (v('C05') + t('T04')) / 2 - (mi.kind === 'lenient' ? 0.5 : 0),
+    direct: v('C07'),
+    repair: (t('T06') + v('C02') + v('C13')) / 3,
+  };
+}
+const IND_TEXT = {
+  recip: { and: '나와 남에게 같은 기준을 묻고', adj: '나와 남에게 같은 기준을 묻는', good: '누구에게나 같은 잣대를 대서 믿고 맡길 수 있어요.' },
+  direct: { and: '불편함은 말로 꺼내야 한다고 보고', adj: '불편함은 말로 꺼내야 한다고 보는', good: '서운한 건 쌓아두기보다 말로 풀어야 한다고 봐서 뒤끝이 적어요.' },
+  repair: { and: '잘못을 인정하고 바로잡는 걸 중요하게 보고', adj: '잘못을 인정하고 바로잡는 걸 중요하게 보는', good: '잘못을 인정하는 걸 부끄러운 일로 여기지 않아요.' },
+};
+// 잠정 기준값: 가상 응답 20명의 축 평균. 대부분이 자율·책임 쪽으로 기울어 원점수만 보면 헤드라인이 같아짐(docs/06) → 평균에서 얼마나 벗어났는지로 고른다. 실제 파일럿 후 교체
+const NORM = { RESP: -23, BOUND: -32, CANDOR: -10, EMO: -2 }, NORM_SD = 60;
+
+// '삭임'은 동기가 다르다 — 함께 나온 축으로 구분 (docs/06: 수진·지우·소희·예림)
+function foldVariant(ax, mi) {
+  if (mi.kind === 'lenient') return 'expect'; // 남이 먼저 알아주길 기대 (예림)
+  if (ax.BOUND.pole === '자율' && ax.BOUND.level !== 'bal' && ax.RESP.pole === '책임' && ax.RESP.level !== 'bal') return 'distance'; // 부딪히기보다 거리로 선 긋기 (지우)
+  if (ax.EMO.pole === '헤아림' && ax.EMO.level !== 'bal' && ax.BOUND.pole === '보살핌' && ax.BOUND.level !== 'bal') return 'relation'; // 관계가 상할까 봐 (수진)
+  return 'mood'; // 분위기를 지키려고 (소희)
+}
+const FOLD_TEXT = {
+  expect: { and: '서운함을 바로 말하기보다 속으로 삭이고', adj: '서운함을 바로 말하기보다 속으로 삭이는',
+    point: '서운한 일이 있어도 바로 말하기보다 마음속에 접어두는 쪽에 가까워요. 그만큼 상대가 먼저 알아주길 기대하게 될 수 있어요.',
+    care: '말하지 않은 서운함이 거리로만 드러나면, 상대는 이유를 모른 채 멀어질 수 있어요.' },
+  distance: { and: '부딪히기보다 거리로 선을 긋고', adj: '부딪히기보다 거리로 선을 긋는',
+    point: '실망스러운 일이 생기면 크게 따지기보다, 그 사람에게 얼마나 맡길지를 조용히 다시 정하는 쪽이에요.',
+    care: '말없이 거리를 두면, 상대는 무엇이 문제였는지 알 기회를 놓칠 수 있어요.' },
+  relation: { and: '관계가 상할까 봐 서운함을 먼저 삼키고', adj: '관계가 상할까 봐 서운함을 먼저 삼키는',
+    point: '서운한 일이 있어도 관계가 상할까 봐 먼저 삼키고, 대신 행동으로 관계를 챙기는 쪽이에요.',
+    care: '삼킨 서운함이 쌓이면 혼자 지칠 수 있어요. 믿을 만한 사람에게는 꺼내놓는 게 좋아요.' },
+  mood: { and: '분위기를 지키려고 서운함을 나중으로 미루고', adj: '분위기를 지키려고 서운함을 나중으로 미루는',
+    point: '불편한 말은 그 자리의 분위기를 깨기보다, 나중에 믿을 만한 사람에게 푸는 쪽이에요.',
+    care: '미뤄둔 이야기가 당사자에게 끝내 닿지 않으면, 같은 일이 반복될 수 있어요.' },
+};
+
+function buildNarrative(ax, vices, traits, mi) {
+  const ind = indicators(vices, traits, mi);
+  // 축 후보: 기울어진 방향과 평균 대비 방향이 같을 때만, 두드러진 정도 = 평균과의 거리
+  const axisFeat = Object.keys(AXES).map(k => {
+    const r = ax[k], dev = r.score - NORM[k];
+    const ok = r.level !== 'bal' && Math.sign(dev) === Math.sign(r.score);
+    return ok ? { kind: 'axis', k, sal: Math.abs(dev) / NORM_SD, text: POLE_TEXT[r.pole] } : null;
+  }).filter(Boolean);
+  const indFeat = Object.keys(ind).filter(k => ind[k] >= 0.5).map(k => ({ kind: 'ind', k, sal: (ind[k] - 0.25) * 1.6, text: IND_TEXT[k] }));
+  // 가장 개인적인 신호 두 개는 축보다 앞에 둔다: 서운함을 삭이는 쪽(직접성 낮음+조화), 남에게 거는 기대가 큼(미러 3쌍 이상)
+  const foldsH = ind.direct <= -0.5 && ax.CANDOR.pole === '조화' && ax.CANDOR.level !== 'bal';
+  const special = [];
+  const fv = foldVariant(ax, mi);
+  if (foldsH) special.push({ kind: 'pattern', k: 'folds', sal: 1.3, text: FOLD_TEXT[fv] });
+  // 균형 축이 2개 이상 = 한쪽으로 단정하지 않고 양쪽을 함께 봄 (docs/06 서하린)
+  const balCount = Object.values(ax).filter(r => r.level === 'bal').length;
+  if (balCount >= 2) special.push({ kind: 'pattern', k: 'integrate', sal: 1.4, text: { and: '한쪽으로 단정하기보다 양쪽을 함께 보고', adj: '한쪽으로 단정하기보다 양쪽을 함께 보는' } });
+  // 사람을 볼 때 '일을 잘한다'·'앞장서서 추진'을 중요하게 고름 = 실행·결과 중시 (행동지향의 대리 지표, docs/06 이준호)
+  const tv = id => (traits.find(([x]) => x === id) || [0, 0])[1];
+  if (tv('T07') + tv('T10') >= 0.5) special.push({ kind: 'pattern', k: 'doer', sal: 1.1, text: { and: '말보다 실제로 해내는 걸 중요하게 보고', adj: '말보다 실제로 해내는 걸 중요하게 보는' } });
+  if (mi.kind === 'lenient') special.push({ kind: 'pattern', k: 'expect', sal: 1.25, text: { and: '상대가 먼저 알아주길 기대하고', adj: '상대가 먼저 알아주길 기대하는' } });
+  if (mi.kind === 'strict') special.push({ kind: 'pattern', k: 'strict', sal: 0.9, text: { and: '남보다 자신에게 더 엄격하고', adj: '남보다 자신에게 더 엄격한' } });
+  // 축 방향은 유형 이름이 이미 말해주므로, 헤드라인은 유형으로 안 드러나는 패턴·보조 지표를 먼저 쓴다 (재검사: 축 특징끼리 순위가 쉽게 뒤바뀜, docs/06)
+  const byS = (a, b) => b.sal - a.sal;
+  const feats = [...[...special, ...indFeat].sort(byS), ...axisFeat.sort(byS)];
+  const ranked = Object.keys(AXES).map(k => [k, ax[k]]).sort((a, b) => Math.abs(b[1].score - NORM[b[0]]) - Math.abs(a[1].score - NORM[a[0]]));
+  const leaning = ranked.filter(([, r]) => r.level !== 'bal');
+  let headline;
+  if (feats.length >= 2) headline = `${feats[0].text.and},<br>${feats[1].text.adj} 사람`;
+  else if (feats.length === 1) headline = `${feats[0].text.adj} 사람`;
+  else headline = '여러 가치 사이에서<br>균형을 찾는 사람';
+
+  const points = [];
+  points.push(['판단할 때', (leaning.length ? leaning : ranked).slice(0, 2).map(([, r]) => r.desc).join(' ')]);
+  const [v1, v2] = vices.slice(0, 2).map(([id]) => VICE_PHRASE[id]);
+  // '덜 거슬림'은 문장에 넣지 않는다 — 용인으로 읽히고, 본인이 하는 행동인 경우가 많았음(docs/05). 근거 카드에만 표시
+  points.push(['관계에서', `${josa(v1, '과', '와')} ${josa(v2, '에는', '에는')} 특히 거슬려 해요.`]);
+  const TRAIT_PHRASE = { T01: '끝까지 책임지는지', T02: '마음을 숨기지 않는지', T03: '내 선택과 경계를 존중하는지', T04: '누구에게나 같은 기준인지', T05: '다정하게 챙겨주는지', T06: '"내가 틀렸어"라고 말할 줄 아는지', T07: '일을 잘하는지', T08: '누구와도 잘 어울리는지', T09: '같이 있으면 재미있는지', T10: '앞장서서 이끄는지' };
+  const [t1, t2] = traits.slice(0, 2).map(([id]) => TRAIT_PHRASE[id]);
+  const moral = traits.filter(([id]) => TRAITS[id][1] === '도덕'), charm = traits.filter(([id]) => TRAITS[id][1] === '매력');
+  const avg = a => a.reduce((s, [, v]) => s + v, 0) / a.length;
+  const gap = avg(moral) - avg(charm);
+  // 됨됨이 우선은 거의 모두의 기본값이라 말하지 않는다. 매력 쪽 비중이 클 때만 언급
+  const gapText = gap < -0.1 ? '함께 있을 때의 즐거움과 능력도 크게 봐요.' : gap <= 0.3 ? '됨됨이만큼 함께 있을 때의 즐거움도 중요하게 봐요.' : '';
+  points.push(['사람을 볼 때', `${t1}, ${t2}를 가장 먼저 봐요.${gapText ? ' ' + gapText : ''}`]);
+  points.push(['나와 남의 기준', fairness(vices, traits, mi).summary]);
+  // 조율 지수는 파일럿에서 비공개 (바넘 위험·축과 이중 계산 — docs/05)
+
+  // 침묵·말투로 하는 불만을 '덜 거슬림'으로 골랐고 조화 쪽이면 — '배려'가 아니라 '접어둠'일 수 있다 (docs/06 최예림)
+  const folds = ind.direct <= -0.5 && ax.CANDOR.pole === '조화' && ax.CANDOR.level !== 'bal';
+  if (folds) points.splice(1, 0, ['부딪힐 때', FOLD_TEXT[fv].point]);
+
+  // 조합·미러에서 나온 개인적 문장을 먼저, 축별 일반 문장은 뒤에 — 각 최대 3개
+  const good = [], care = [];
+  const poleGood = leaning.slice(0, 2).map(([, r]) => POLE_TEXT[r.pole].good);
+  const poleCare = leaning.slice(0, 2).map(([, r]) => POLE_TEXT[r.pole].care);
+  if (folds) care.push(FOLD_TEXT[fv].care);
+  indFeat.slice(0, 1).forEach(f => good.push(f.text.good));
+  if (mi.kind === 'strict') care.push('자신에게 엄격한 만큼, 지칠 때 스스로를 몰아붙이기 쉬워요.');
+  if (mi.kind === 'lenient') care.push('남에게 거는 기대가 말로 전해지지 않으면, 상대는 기준이 다르다고 느낄 수 있어요.');
+  if (ax.BOUND.pole === '자율' && ax.BOUND.level !== 'bal' && ax.EMO.pole === '구분' && ax.EMO.level !== 'bal') care.push('존중과 "결론은 내용으로"가 겹치면, 힘든 사람은 혼자 남겨진 느낌을 받을 수 있어요.');
+  const balanced = ranked.filter(([, r]) => r.level === 'bal');
+  if (balanced.length) good.push(`${balanced.map(([k]) => AXES[k].name.replace(' 축', '')).join('·')} 문제에선 한쪽에 치우치지 않고 상황을 봐요.`);
+  return { headline, points, good: [...good, ...poleGood].slice(0, 3), care: [...care, ...poleCare].slice(0, 3) };
+}
+
+// ───────── 결과 화면 ─────────
+function renderResult() {
+  $next.parentElement.style.display = 'none';
+  const ax = scoreAxes(), vices = scoreMd('vice'), traits = scoreMd('trait'), mi = mirrorIndex();
+  const N = buildNarrative(ax, vices, traits, mi);
+  const FA = fairness(vices, traits, mi), TS = trialScore();
+  const diffs = ORDER.filter(id => PREDICT[id] !== undefined && S.ans[id] !== undefined && S.ans[id] !== PREDICT[id]);
+  const flagged = Object.entries(S.flags).filter(([, v]) => v);
+  const mins = Math.round((Date.now() - S.start) / 60000);
+  const itemLabel = k => ITEMS[k] ? `${k} ${(isGeneric(ITEMS[k].q) ? ITEMS[k].L[0] : ITEMS[k].q).slice(0, 28)}…` : k.endsWith('Tie') ? `${k.startsWith('vice') ? '2부' : '4부'} 순위 정하기` : `${k.startsWith('vice') ? '2부' : '4부'} 카드 ${+k.replace(/\D/g, '') + 1}번째 화면`;
+
+  const axisCard = k => {
+    const a = AXES[k], r = ax[k], st = AXIS_STYLE[k], pos = 50 + r.score / 2;
+    const ids = ORDER.filter(id => ITEMS[id].axis === k && S.ans[id] !== undefined);
+    return `<div class="ax" style="--c:${st.c};--tint:${st.tint}">
+      <div class="ax-top">
+        <div class="ax-name">${a.name} · ${a.L} ↔ ${a.R}</div>
+        <div class="ax-band">${r.band}<span class="ax-conf">${r.conf}</span></div>
+        <p class="ax-desc">${r.desc}</p>
+        <div class="track"><span class="fill" style="left:${Math.min(50, pos)}%;width:${Math.abs(pos - 50)}%"></span><span class="c"></span><span class="m" style="left:${pos}%"></span></div>
+        <div class="poles-row"><span>${a.L}</span><span>${a.R}</span></div>
+      </div>
+      <details class="ev"><summary>이렇게 답했어요 (${ids.length}문항)</summary>
+        ${ids.map(id => { const s = signedOnAxis(id, S.ans[id]); const it = ITEMS[id];
+          return `<div class="ev-item"><div class="q">${esc(isGeneric(it.q) ? '두 생각 중에서' : it.q)}</div><div class="a">${esc(answerShort(id, S.ans[id]))}
+          <span class="chip ${s === 0 ? 'zero' : ''}">${s === 0 ? '중간' : `${s < 0 ? a.L : a.R} ${Math.abs(s)}`}</span></div></div>`; }).join('')}
+      </details></div>`;
+  };
+  const mirrorRows = [['O4', 'M4', '바빠서 반나절 연락이 없던 일'], ['V03', 'M1', '비밀을 옮긴 일'], ['V04', 'M2', '몸살로 마감을 놓친 일'], ['V16', 'M3', '"솔직히 별로야"라고 한 일']]
+    .filter(([o, m]) => S.ans[o] !== undefined && S.ans[m] !== undefined)
+    .map(([o, m, t]) => `<div class="ev-item"><div class="q">${t}</div>
+      <div class="mirror-row"><b>남이 하면</b><span>${esc(answerShort(o, S.ans[o]))}</span></div>
+      <div class="mirror-row"><b>내가 하면</b><span>${esc(answerShort(m, S.ans[m]))}</span></div></div>`).join('');
+
+  $app.innerHTML = `
+    <div class="hero"><div class="eyebrow">나란 이런 사람</div><h1>${N.headline}</h1>
+      <p class="note" style="margin:10px 0 0">이 결과는 내가 <b>무엇이 옳다고 보는지</b>예요. 실제로 어떻게 행동하는지와는 다를 수 있어요.</p></div>
+    <div class="points">${N.points.map(([k, v]) => `<div class="point"><div class="k">${k}</div><div class="v">${esc(v)}</div></div>`).join('')}</div>
+    <div class="duo">
+      <div class="card good"><h3>이럴 때 빛나요</h3><ul>${N.good.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>
+      <div class="card care"><h3>이런 건 조심해요</h3><ul>${N.care.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>
+    </div>
+
+    <div class="sec">이렇게 나온 이유</div>
+    <p class="sec-sub">각 축을 눌러 내가 한 답을 확인할 수 있어요.</p>
+    ${Object.keys(AXES).map(axisCard).join('')}
+
+    <div class="card"><h3>가장 거슬리는 것</h3>
+      <ol class="rank neg">${vices.slice(0, 3).map(([id]) => `<li>${esc(VICES[id][0])}</li>`).join('')}</ol>
+      <div class="sub-h">비교적 덜 거슬리는 것</div>
+      <ol class="rank mute">${vices.slice(-3).reverse().map(([id]) => `<li>${esc(VICES[id][0])}</li>`).join('')}</ol></div>
+    <div class="card"><h3>사람을 볼 때 중요한 것</h3>
+      <ol class="rank pos">${traits.filter(([, v]) => v > 0).slice(0, 3).map(([id]) => `<li>${esc(TRAITS[id][0])}</li>`).join('')}</ol>
+      <div class="sub-h">덜 중요하게 보는 것</div>
+      <ol class="rank mute">${traits.slice(-3).reverse().map(([id]) => `<li>${esc(TRAITS[id][0])}</li>`).join('')}</ol></div>
+    <div class="card"><h3>공정 · 같은 기준</h3>
+      <div class="mirror-row" style="grid-template-columns:110px 1fr"><b>이중잣대가 거슬리는 정도</b><span>${FA.vLabel}</span></div>
+      <div class="mirror-row" style="grid-template-columns:110px 1fr"><b>"같은 기준"인 사람을</b><span>${FA.tLabel}</span></div>
+      <div class="mirror-row" style="grid-template-columns:110px 1fr"><b>실제로 쓰는 기준</b><span>${mi.label}${mi.note || ''}</span></div>
+      <details class="ev" style="padding:4px 0 0"><summary>입장 바꿔 답한 것 보기</summary>${mirrorRows}</details></div>
+
+    <p class="note">※ 시험판이에요. 점수 기준과 문장은 임시예요.</p>
+    <button class="ghost primary cta-inline" onclick="copyResult()">결과 복사해서 Claude에게 보내기</button>
+    <button class="ghost" onclick="resetAll()">처음부터 다시</button>
+
+    <details class="dev"><summary>개발용 · 시험 축 <span class="tag">수평↔연륜 ${TS.label} (${TS.raw})</span> · Claude 예상과 비교 <span class="tag">다른 답 ${diffs.length}</span>${flagged.length ? `<span class="tag">애매 ${flagged.length}</span>` : ''}</summary>
+      ${diffs.map(id => `<div class="diff"><b>${id} · ${esc(isGeneric(ITEMS[id].q) ? ITEMS[id].L[0] : ITEMS[id].q)}</b>내 답: ${esc(answerText(id, S.ans[id]))}<br><span class="note">예상: ${esc(answerText(id, PREDICT[id]))}</span></div>`).join('')}
+      ${flagged.map(([k, v]) => `<div class="diff"><b>⚑ ${esc(itemLabel(k))}</b>${esc(v.trim() || '(메모 없음)')}</div>`).join('')}
+    </details>`;
+
+  window.copyResult = () => {
+    const L = [`[나란 가치검사 시험판 결과] 소요 약 ${mins}분`, '', `■ 헤드라인: ${N.headline.replace('<br>', ' ')}`];
+    N.points.forEach(([k, v]) => L.push(`- ${k}: ${v}`));
+    L.push('', '■ 5축');
+    for (const [k, a] of Object.entries(AXES)) L.push(`- ${a.name}(${a.L}↔${a.R}): ${ax[k].band} / ${ax[k].conf} / 점수 ${Math.round(ax[k].score)}`);
+    L.push('', '■ 거슬리는 순위: ' + vices.map(([id, s]) => `${VICES[id][1]}(${+s.toFixed(2)})`).join(', '));
+    L.push('■ 사람 볼 때 순위: ' + traits.map(([id, s]) => `${TRAITS[id][0]}(${+s.toFixed(2)})`).join(', '));
+    { const di = dialogIndex(); L.push(`■ 조율 지향: ${di.n}/${di.of} (${di.picked.join(',')})`); }
+    L.push(`■ 공정 카드: ${FA.summary} / 이중잣대 ${FA.vS} · 같은 기준 ${FA.tS}`);
+    L.push(`■ 기준 일관성: ${mi.label} (d=${mi.d.toFixed(2)}, 쌍별 ${mi.ds.join('/')})`);
+    L.push(`■ 시험 축 수평↔연륜 (비채점): ${TS.label} 원점수 ${TS.raw} (${TS.n}/4문항, −는 수평) · ${TRIAL.map(id => `${id}=${S.ans[id] === undefined ? '-' : ITEMS[id].type === 'sjt' ? 'ABCD'[S.ans[id]] : S.ans[id]}`).join(' ')}`);
+    L.push('', `■ 예상과 다른 답 ${diffs.length}개`);
+    diffs.forEach(id => L.push(`- ${id} 내 답: ${answerText(id, S.ans[id])} | 예상: ${answerText(id, PREDICT[id])}`));
+    L.push('', `■ 애매 표시 ${flagged.length}개`);
+    flagged.forEach(([k, v]) => L.push(`- ${itemLabel(k)}: ${v.trim() || '(메모 없음)'}`));
+    L.push('', '■ 전체 응답');
+    L.push(Object.entries(S.ans).map(([k, v]) => `${k}=${ITEMS[k].type === 'sjt' ? 'ABCD'[v] : v}`).join(' '));
+    L.push(Object.entries(S.md).map(([k, m]) => k.endsWith('Tie') ? `${k}: ${m.picks.join('>')}` : `${k}: 최악 ${m.w} / 최선 ${m.b}`).join(' | '));
+    const text = L.join('\n');
+    navigator.clipboard.writeText(text).then(() => {
+      document.querySelector('.cta-inline').textContent = '복사했어요 · Claude에게 붙여넣어 주세요';
+    }).catch(() => { prompt('아래 내용을 복사해 주세요', text); });
+  };
+  window.resetAll = () => { S = { step: 0, ans: {}, md: {}, flags: {}, start: Date.now(), dir: 1, perm: {} }; save(); render(); };
+}
+
+render();
+</script>
+</body>
+</html>
