@@ -36,6 +36,7 @@ export default defineConfig({
         name: '나란 · 나라는 사람',
         short_name: '나란',
         description: '가치관·성격·애착·기질, 나라는 사람을 한 조각씩 채워가요.',
+        categories: ['lifestyle', 'health', 'personalization'],
         lang: 'ko',
         theme_color: '#ffffff',
         background_color: '#ffffff',

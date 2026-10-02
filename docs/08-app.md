@@ -82,3 +82,4 @@
 - 새 버전 알림: `src/lib/appUpdate.ts` — 빌드마다 `dist/version.json` 의 build id 를 10분마다·탭 복귀 때 확인, 다르면 UpdateBanner. '지금 받기' = 서비스워커 해제 + 캐시 비우기 + 새로고침 (**localStorage 기록은 유지**). 검사 중일 수 있어 자동 새로고침은 안 한다. 운영 빌드에서만 동작.
 - 버전 올리기: `package.json` version. 설정 화면에 `v0.6.0 · 빌드시각` 표시.
 - 참고 구현: `C:\Users\USER\Desktop\Project\public\focus-accounter` (도니도라).
+- 검색: `index.html` — 검색어 넣은 title·description·keywords, JSON-LD(WebApplication, 무료), 자바스크립트를 안 돌리는 수집기(네이버)용 정적 소개문(#root 안, 앱이 뜨면 교체). `public/robots.txt`, `public/sitemap.xml`. 구글 서치콘솔·네이버 서치어드바이저 인증 meta 는 주석으로 자리만 있음.
