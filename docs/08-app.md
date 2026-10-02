@@ -76,7 +76,7 @@
 ## 아이콘 · 공유 미리보기 · PWA · 새 버전 알림 (v0.6.0)
 
 - 아이콘: `public/` (favicon.ico/svg/96, apple-touch-icon, web-app-manifest-192/512). 공유 이미지 `public/og-image.png` (1200×630).
-- OG 태그는 `index.html`. **배포 주소가 정해지면 og:image 를 절대 주소로 바꾸고 og:url 을 추가할 것** (카카오톡은 상대 경로를 못 읽는다).
+- OG 태그는 `index.html`. 배포 주소 https://naran-kappa.vercel.app — og:image·og:url 은 절대 주소 (카카오톡은 상대 경로를 못 읽는다). 주소가 바뀌면 index.html 함께 수정.
 - PWA: `vite-plugin-pwa` (vite.config.ts). 개발 서버에서는 꺼 둠. 오프라인에서도 열린다.
 - 설치 안내: `src/components/AppBanners.tsx` InstallBanner — 크롬·안드로이드는 '설치' 버튼, iOS 사파리는 '공유 → 홈 화면에 추가' 안내. 접속 20초 뒤, 닫으면 14일 숨김, 이미 설치해 앱으로 열면 안 뜸.
 - 새 버전 알림: `src/lib/appUpdate.ts` — 빌드마다 `dist/version.json` 의 build id 를 10분마다·탭 복귀 때 확인, 다르면 UpdateBanner. '지금 받기' = 서비스워커 해제 + 캐시 비우기 + 새로고침 (**localStorage 기록은 유지**). 검사 중일 수 있어 자동 새로고침은 안 한다. 운영 빌드에서만 동작.
