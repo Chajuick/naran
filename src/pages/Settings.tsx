@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { APP_VERSION, BUILD_ID } from '../lib/appUpdate';
+import { InstallRow } from '../components/AppBanners';
 
 const BACKUP_KIND = 'naran-backup';
 
@@ -71,6 +72,7 @@ export default function Settings() {
 
       <div className="sec">나란</div>
       <Link to="/welcome" className="setting-row">소개 다시 보기<span>›</span></Link>
+      <InstallRow />
       <div className="setting-row static">앱 버전<span>v{APP_VERSION} · {BUILD_ID.split('-').pop()}</span></div>
       <div className="setting-row static">가치관 검사 버전<span>v0.4.5 · 검증 중</span></div>
       <button className="setting-row danger" onClick={wipe}>{armed ? '한 번 더 누르면 모든 기록이 지워져요' : '모든 기록 지우기'}</button>

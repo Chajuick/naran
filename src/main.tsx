@@ -11,7 +11,7 @@ import { AnalyzeTab, HistoryTab, SnapshotDetail, TestsTab } from './pages/Tabs';
 import { AttachInput, MbtiInput, TemperInput } from './pages/Inputs';
 import './styles.css';
 import { useStore } from './store/useStore';
-import { InstallBanner, UpdateBanner } from './components/AppBanners';
+import { UpdateBanner } from './components/AppBanners';
 import { watchAppUpdate } from './lib/appUpdate';
 
 // 새 버전 감지 (운영 빌드에서만, 10분마다 + 탭으로 돌아올 때)
@@ -51,7 +51,6 @@ createRoot(document.getElementById('root')!).render(
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <UpdateBanner />
-      <InstallBanner />
     </HashRouter>
   </StrictMode>,
 );

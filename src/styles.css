@@ -359,7 +359,7 @@
 
   /* ───── 알림 배너 (새 버전 · 앱 설치) ───── */
   .app-banner { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(84px + env(safe-area-inset-bottom)); z-index: 60; width: min(448px, calc(100vw - 24px)); display: flex; align-items: center; gap: 12px; padding: 14px 12px 14px 16px; border-radius: 18px; background: #fff; box-shadow: 0 10px 30px rgba(0, 0, 0, .16); border: 1px solid var(--line); animation: fadeUp .4s cubic-bezier(.2, .8, .2, 1) both; }
-  .app-banner.install { bottom: calc(150px + env(safe-area-inset-bottom)); }
+  .install-card { display: flex; align-items: center; gap: 12px; margin-top: 12px; padding: 14px 10px 14px 14px; border-radius: 16px; background: var(--card, #f2f4f6); }
   .ab-icon { width: 44px; height: 44px; border-radius: 12px; flex: none; }
   .ab-text { flex: 1; font-size: 13px; line-height: 1.45; word-break: keep-all; }
   .ab-text b { display: block; font-size: 15px; margin-bottom: 2px; }

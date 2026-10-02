@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import Pieces, { PIECE_COLORS } from '../components/Pieces';
 import { TabPage } from '../components/TabBar';
+import { InstallCard } from '../components/AppBanners';
 import { fmtDate, MODULE_KEYS, MODULE_NAME, type ModuleKey, type Snapshot } from '../lib/history';
 import { crossSignals } from '../lib/export/prompt';
 import { attachDetail, diffLines, mbtiDetail, moduleTitle, temperDetail, valuesResult } from '../lib/summary';
@@ -77,6 +78,7 @@ export default function Me() {
       {missing.length > 0 && (
         <Link to="/tests" className="fill-hint"><span>{missing.map(m => MODULE_NAME[m]).join(', ')} 조각이 비어 있어요</span><b>채우기 ›</b></Link>
       )}
+      <InstallCard />
 
       <div className="sec" style={{ marginTop: 24 }}>지금의 나</div>
       <div className="now-card">

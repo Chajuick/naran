@@ -17,8 +17,9 @@ export function UpdateBanner() {
 }
 
 // ── 앱 설치 안내 ──
+// 화면 위에 떠 있지 않고, 나 탭 안에 카드로 들어간다 (첫 기록이 생긴 뒤 — 지킬 기록이 있을 때 권하는 게 자연스럽다).
 // 크롬·안드로이드: beforeinstallprompt 로 바로 설치 창. iOS 사파리: 그런 기능이 없어 '공유 → 홈 화면에 추가' 안내.
-// 이미 설치해서 앱으로 열었으면 띄우지 않고, '나중에'를 누르면 2주 동안 다시 띄우지 않는다.
+// 이미 설치해서 앱으로 열었으면 안 보이고, 카드의 ✕ 는 2주 동안 숨긴다. 설정의 '홈 화면에 추가' 줄은 숨김과 상관없이 늘 있다.
 
 interface BIPEvent extends Event { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> }
 const SNOOZE_KEY = 'naran-install-snooze';
@@ -35,27 +36,45 @@ if (typeof window !== 'undefined') {
   window.addEventListener('appinstalled', () => { deferred = null; bipListeners.forEach(f => f()); });
 }
 
-export function InstallBanner() {
+/** 지금 이 브라우저에서 설치를 권할 수 있는지 + 설치 실행 */
+function useInstall() {
   const [, force] = useState(0);
-  const [hidden, setHidden] = useState(() => isStandalone() || snoozed());
   useEffect(() => { const f = () => force(x => x + 1); bipListeners.add(f); return () => { bipListeners.delete(f); }; }, []);
-  // 첫 화면에서 바로 띄우지 않고 조금 둘러본 뒤에
-  const [ready, setReady] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setReady(true), 20000); return () => clearTimeout(t); }, []);
   const ios = isIOS();
-  if (hidden || !ready || (!deferred && !ios)) return null;
+  const can = !isStandalone() && (!!deferred || ios);
+  const install = async () => { const d = deferred; if (!d) return; await d.prompt(); await d.userChoice; deferred = null; force(x => x + 1); };
+  return { can, ios, install, direct: !!deferred };
+}
+
+const IOS_HINT = '사파리 아래 공유 버튼 → "홈 화면에 추가"를 누르면 앱처럼 쓸 수 있어요.';
+
+/** 나 탭 카드 */
+export function InstallCard() {
+  const { can, ios, install, direct } = useInstall();
+  const [hidden, setHidden] = useState(snoozed);
+  if (!can || hidden) return null;
   const snooze = () => { try { localStorage.setItem(SNOOZE_KEY, String(Date.now())); } catch { /* 저장 못 해도 이번엔 닫는다 */ } setHidden(true); };
   return (
-    <div className="app-banner install" role="dialog" aria-label="앱 설치">
+    <div className="install-card anim">
       <img src="./web-app-manifest-192x192.png" alt="" className="ab-icon" />
       <div className="ab-text">
-        <b>홈 화면에 나란 추가하기</b>
-        <span>{ios ? '아래 공유 버튼 → "홈 화면에 추가"를 누르면 앱처럼 쓸 수 있어요.' : '앱처럼 바로 열고, 인터넷이 없어도 기록을 볼 수 있어요.'}</span>
+        <b>홈 화면에 나란 두기</b>
+        <span>{ios ? IOS_HINT : '앱처럼 바로 열고, 인터넷이 없어도 기록을 볼 수 있어요.'}</span>
       </div>
-      {!ios && deferred && (
-        <button className="ab-btn" onClick={async () => { const d = deferred!; await d.prompt(); await d.userChoice; deferred = null; setHidden(true); }}>설치</button>
-      )}
+      {!ios && direct && <button className="ab-btn" onClick={install}>설치</button>}
       <button className="ab-x" onClick={snooze} aria-label="나중에">✕</button>
     </div>
   );
+}
+
+/** 설정 화면 줄 — 숨김과 상관없이 설치할 수 있을 때 늘 보인다 */
+export function InstallRow() {
+  const { can, ios, install, direct } = useInstall();
+  const [open, setOpen] = useState(false);
+  if (!can) return null;
+  if (!ios && direct) return <button className="setting-row" onClick={install}>홈 화면에 추가<span>›</span></button>;
+  return (<>
+    <button className="setting-row" onClick={() => setOpen(o => !o)}>홈 화면에 추가<span>{open ? '⌃' : '›'}</span></button>
+    {open && <p className="note" style={{ margin: '0 4px 8px' }}>{IOS_HINT}</p>}
+  </>);
 }
