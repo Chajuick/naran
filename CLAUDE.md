@@ -12,6 +12,7 @@
 - `docs/05-full-test-validation.md` — 전체 검사 가상 검증 2회(4축 문항 v0.4 교체 근거, 결과 문장 표면 타당도).
 - `docs/06-user-persona-validation.md` — 페르소나 검증 전 과정(세트 1·2·2b·3)과 v0.4.4→v0.4.5 근거. **문항을 고치기 전에 읽을 것.**
 - `docs/08-app.md` — **앱 구조·실행법.** `pnpm dev` / `pnpm test` / `pnpm build`.
+- `docs/09-character.md` — **내 캐릭터(픽셀 아트 꾸미기) 설계 초안.** 측정 오염 방지 규칙(2절)을 먼저 읽을 것.
 - `src/data/values/items.ts` — **앱의 문항 원본 (v0.4.5, 동결).** 바꾸면 `pnpm test` 회귀 테스트가 깨지는지 확인하고 docs/06에 기록.
 - `prototype/values-test.html` — 단일 파일 시험판 (v0.4.5, 앱으로 이전 완료 — 참고용).
 
