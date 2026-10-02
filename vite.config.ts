@@ -53,7 +53,7 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         // version.json 은 항상 네트워크에서 — 캐시되면 새 버전을 영영 못 알아챈다
-        globIgnores: ['**/version.json', '**/og-image.png', '**/google*.html'],
+        globIgnores: ['**/version.json', '**/og-image.png', '**/google*.html', '**/naver*.html'],
         navigateFallback: 'index.html',
         // 글꼴(Pretendard CDN)은 처음 받은 뒤 오프라인에서도 쓰게
         runtimeCaching: [{
