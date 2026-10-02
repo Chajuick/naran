@@ -83,3 +83,4 @@
 - 버전 올리기: `package.json` version. 설정 화면에 `v0.6.0 · 빌드시각` 표시.
 - 참고 구현: `C:\Users\USER\Desktop\Project\public\focus-accounter` (도니도라).
 - 검색: `index.html` — 검색어 넣은 title·description·keywords, JSON-LD(WebApplication, 무료), 자바스크립트를 안 돌리는 수집기(네이버)용 정적 소개문(#root 안, 앱이 뜨면 교체). `public/robots.txt`, `public/sitemap.xml`. 구글 서치콘솔·네이버 서치어드바이저 인증 meta 는 주석으로 자리만 있음.
+- 구글 서치콘솔 소유 확인: `public/googlece781cd9c0520fdd.html` — **지우면 확인이 풀린다.** 서비스워커 선캐시에서는 제외(vite.config.ts globIgnores).
